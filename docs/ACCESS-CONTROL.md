@@ -101,3 +101,10 @@ From Team → Manage access, an active verified account owner can change another
 The write locks the organization and membership, rechecks ownership and account status, validates selected properties against the owner's current grants, and atomically replaces grants. Deactivation clears all property grants; restoration requires explicit selection. Every actual change records the actor, reason, version and before/after role, active state, property IDs and names. A stale version fails without mutation. Identical submissions create no history entry. This is scoped access-change history, not a complete operational audit trail.
 
 Tests cover cross-account/member/property boundaries, owner protection, role escalation, deactivation/restoration, membership isolation, history and stale edits.
+
+
+## Customer location and utility-account setup (implemented September 29, 2026)
+
+Verified active owners can add named locations to an active customer account, then add utility account numbers, providers and utility types at locations they can access. Creation locks the customer organization and rechecks ownership; account/property IDs in submitted data do not select scope. Duplicate location names within a customer account and duplicate utility account references within a location are rejected case-insensitively. Identifiers remain strings, preserving leading zeroes.
+
+A new location receives an explicit owner grant in the same transaction. No teammate inherits a grant automatically. Assigned viewers and reviewers can view location utility accounts, but cannot create them. Revocation and suspension are checked on every request. Customer records remain excluded from the fictional demo. Manager customer-view pages do not expose setup controls or links that would switch away from their read-only context. Location editing, archival, address/meter fields, actual bill intake and external integrations are future increments; no expected bills or statements are fabricated during setup.

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\CustomerAuthController;
+use App\Http\Controllers\CustomerLocationController;
 use App\Http\Controllers\CustomerWorkspaceController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\Platform\CustomerController;
@@ -50,6 +51,10 @@ Route::middleware('auth')->group(function () {
 Route::get('/invitations/{token}', [InvitationController::class, 'show'])->where('token', '[A-Za-z0-9]{64}')->middleware('throttle:30,1')->name('invitations.show');
 Route::post('/invitations/{token}/register', [InvitationController::class, 'register'])->where('token', '[A-Za-z0-9]{64}')->middleware(['guest', 'throttle:5,1'])->name('invitations.register');
 Route::middleware(['auth', RequireActiveCustomer::class, 'auth.session', 'verified'])->group(function () {
+    Route::get('/workspace/{organization}/locations/create', [CustomerLocationController::class, 'create'])->whereNumber('organization')->name('customer.locations.create');
+    Route::post('/workspace/{organization}/locations', [CustomerLocationController::class, 'store'])->whereNumber('organization')->middleware('throttle:20,1')->name('customer.locations.store');
+    Route::get('/workspace/{organization}/locations/{location}', [CustomerLocationController::class, 'show'])->whereNumber(['organization', 'location'])->name('customer.locations.show');
+    Route::post('/workspace/{organization}/locations/{location}/accounts', [CustomerLocationController::class, 'storeAccount'])->whereNumber(['organization', 'location'])->middleware('throttle:20,1')->name('customer.locations.accounts.store');
     Route::post('/invitations/{token}/accept', [InvitationController::class, 'accept'])->where('token', '[A-Za-z0-9]{64}')->middleware('throttle:10,1')->name('invitations.accept');
     Route::get('/workspace/{organization}/team/members/{membership}', [TeamAccessController::class, 'edit'])->whereNumber(['organization', 'membership'])->name('team.member.edit');
     Route::put('/workspace/{organization}/team/members/{membership}', [TeamAccessController::class, 'update'])->whereNumber(['organization', 'membership'])->middleware('throttle:20,1')->name('team.member.update');

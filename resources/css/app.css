@@ -51,3 +51,5 @@
 @media(max-width:600px){.account-switcher{width:220px}.account-switcher-menu{right:-50px}.workspace-nav:has(.account-switcher){gap:10px}.account-switcher-label strong{font-size:11px}}
 
 .review-form .access-reason-label{margin-top:24px}.review-event{overflow-wrap:anywhere}.panel>.pagination{padding:12px 20px}
+
+.setup-input{display:block;width:100%;padding:10px 12px;margin-top:6px;border:1px solid #ccd9d0;border-radius:6px;font-size:14px;color:#294333}.property-row>div,.property-row>span{min-width:0;overflow-wrap:anywhere}
