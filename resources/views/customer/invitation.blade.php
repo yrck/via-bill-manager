@@ -1,0 +1,8 @@
+<x-customer-layout><main class="auth-page"><div class="eyebrow">YOU'RE INVITED</div><h1>Join {{ $organization->name }}.</h1><p>This invitation is for {{ $invitation->email }} as a {{ $invitation->role }}.</p>@include('partials.auth-feedback')
+@guest<p><a href="{{ route('login') }}">Already have a VIA login? Sign in →</a></p><form method="POST" action="{{ route('invitations.register', $token) }}" class="auth-form">@csrf<h2>Create your login</h2><label for="name">Your name</label><input id="name" name="name" value="{{ old('name') }}" autocomplete="name" required maxlength="150"><label for="password">Password</label><input id="password" name="password" type="password" required minlength="12" maxlength="72" autocomplete="new-password"><small>Use at least 12 characters.</small><label for="password_confirmation">Confirm password</label><input id="password_confirmation" name="password_confirmation" type="password" required minlength="12" maxlength="72" autocomplete="new-password"><button class="primary-button">Create login & verify email</button></form>
+@else
+@if(auth()->user()->email !== $invitation->email)<div class="review-notice">You are signed in with a different email. Sign out and use the invited address to accept.</div>
+@elseif(! auth()->user()->hasVerifiedEmail())<p><a href="{{ route('verification.notice') }}">Verify your email to continue →</a></p>
+@else<form method="POST" action="{{ route('invitations.accept', $token) }}">@csrf<button class="primary-button">Accept invitation</button></form>@endif
+@endguest
+<p class="auth-foot">Joining gives you access only to the properties assigned in this invitation. You can belong to more than one organization with the same login.</p></main></x-customer-layout>

@@ -1,0 +1,40 @@
+name: via-bill-management
+x-app: &app
+  image: via-bill-management:dev
+  build: .
+  working_dir: /var/www/html
+  env_file: .env
+  volumes:
+    - .:/var/www/html
+  depends_on:
+    db:
+      condition: service_healthy
+services:
+  app:
+    <<: *app
+    command: php artisan serve --host=0.0.0.0 --port=8000
+    ports:
+      - '127.0.0.1:8091:8000'
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: via_bills
+      POSTGRES_USER: via
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U via -d via_bills']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  worker:
+    <<: *app
+    command: php artisan queue:work --tries=3 --timeout=90
+    profiles: [background]
+  scheduler:
+    <<: *app
+    command: php artisan schedule:work
+    profiles: [background]
+volumes:
+  postgres-data:

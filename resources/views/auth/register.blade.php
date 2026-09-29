@@ -1,0 +1,8 @@
+<x-customer-layout><main class="auth-page"><div class="eyebrow">YOUR UTILITY BILLS, IN ONE PLACE</div><h1>Create your account.</h1><p>Name your customer account and create your login. You can join other accounts by invitation.</p>@include('partials.auth-feedback')
+<form method="POST" action="{{ route('register') }}" class="auth-form">@csrf
+<label for="name">Your name</label><input id="name" name="name" value="{{ old('name') }}" required maxlength="150" autocomplete="name">
+<label for="organization">Account name</label><input id="organization" name="organization" value="{{ old('organization') }}" required maxlength="150" autocomplete="organization" placeholder="e.g. Maia Estates" aria-describedby="account-help"><small id="account-help">Your team will see this name when choosing an account. Have an invitation? Use its link to join that account.</small>
+<label for="email">Email address</label><input id="email" name="email" type="email" value="{{ old('email') }}" required maxlength="254" autocomplete="email">
+<label for="password">Password</label><input id="password" name="password" type="password" required minlength="12" autocomplete="new-password" aria-describedby="password-help"><small id="password-help">Use at least 12 characters.</small>
+<label for="password_confirmation">Confirm password</label><input id="password_confirmation" name="password_confirmation" type="password" required minlength="12" autocomplete="new-password">
+<button class="primary-button">Create account</button></form><p class="auth-foot">Already have an account? <a href="{{ route('login') }}">Sign in</a></p></main></x-customer-layout>

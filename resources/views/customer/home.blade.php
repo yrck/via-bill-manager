@@ -1,0 +1,3 @@
+<x-customer-layout><main><div class="heading"><div><div class="eyebrow">YOUR ACCOUNTS</div><h1>My accounts.</h1><p>Choose an account. You can also switch accounts from the header at any time.</p></div></div>
+@forelse($organizations as $organization)<section class="panel"><div class="panel-heading"><div><h2>{{ $organization->name }}</h2><p>{{ $organization->owner_user_id === auth()->id() ? 'Account owner' : 'Team member' }}</p></div><a class="inspect" href="{{ route('customer.workspace', $organization->id) }}">Open account →</a></div></section>@empty<section class="panel empty"><h2>No active accounts</h2><p>Your login has no active account membership. Contact your account owner or VIA support.</p></section>@endforelse
+</main></x-customer-layout>

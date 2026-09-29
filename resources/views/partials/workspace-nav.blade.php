@@ -1,0 +1,1 @@
+<header class="topbar"><nav class="workspace-nav" aria-label="Workspace navigation"><a href="{{ route('dashboard') }}">Overview</a><a href="{{ route('bills') }}" @if(request()->routeIs('bills*')) aria-current="page" @endif>Bills & exceptions</a><a href="{{ route('portfolio') }}">Portfolio</a></nav><span class="demo-badge">DEMO ENVIRONMENT</span></header>

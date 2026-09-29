@@ -1,0 +1,9 @@
+# VIA Bill Management
+
+Read README.md and docs/README.md before implementation. Existing plans describe proposals, not completed features. There is a local-only fictional dashboard demo plus customer registration/login, email verification, password recovery and authenticated empty-workspace entry. Staff management supports customer directory/detail and organization suspension/restoration with actor/reason history. Customer bill workflows, SSO, intake, payments and a full operational audit trail are not yet implemented. Manager grants are explicit and separate from customer ownership; eligibility requires an active, verified exact nu-devco.com address. Domain alone never grants access. Customer-view mode is read-only, retains the manager identity, and must recheck both manager eligibility and the selected customer membership/property grants. app/Access/BillingAccess.php scopes authenticated workspace reads; organization-owned portfolios must remain excluded from the anonymous demo. The demo route middleware must also persist on Livewire update requests.
+
+Use Docker for PHP, Composer, Artisan, Pint and PHPUnit. Use Node 22.12+ for Vite. Never install a host PHP runtime merely for this project. See README.md for commands.
+
+Keep the demo disabled by default and inaccessible outside local/testing. Never load real data until authentication and organization/property authorization are implemented and tested. Do not reuse Contract Manager secrets, databases or role grants. Keep .env and private files out of Git. Preserve docs/ACCOUNT-REVIEW-CHECKLIST.md as the record of uncertainties.
+
+Run relevant feature tests and vendor/bin/pint after PHP edits and npm run build after frontend edits. Test against in-memory SQLite or a dedicated test database; never point tests at application data. Core business records remain regular PostgreSQL tables. Reserve Timescale hypertables for interval readings once that module is implemented and benchmarked.
