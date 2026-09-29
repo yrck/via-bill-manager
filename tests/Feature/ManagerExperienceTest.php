@@ -78,7 +78,7 @@ class ManagerExperienceTest extends TestCase
         $this->enter()->assertRedirect('/management/customer-view');
         $this->assertAuthenticatedAs($this->manager);
         $this->get('/management/customer-view')->assertOk()->assertSee('Read-only customer view')->assertSee('Granted location')->assertDontSee('Hidden location')->assertSee('Return to management');
-        $this->get('/management/customer-view/team')->assertOk()->assertSee('Customer A')->assertDontSee('Send invitation')->assertSee('Invitation actions are unavailable');
+        $this->get('/management/customer-view/team')->assertOk()->assertSee('Customer A')->assertDontSee('Send invitation')->assertDontSee('Manage access')->assertSee('Invitation actions are unavailable');
         $this->assertDatabaseHas('customer_view_sessions', ['manager_id' => $this->manager->id, 'user_id' => $this->customer->id, 'organization_id' => $this->organization, 'ended_at' => null]);
         $this->post('/workspace/'.$this->organization.'/team/invite', ['email' => 'other@example.test', 'role' => 'viewer'])->assertNotFound();
         $this->post('/management/customer-view/stop')->assertRedirect('/management');

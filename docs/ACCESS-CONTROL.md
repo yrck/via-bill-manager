@@ -92,3 +92,12 @@ Direct registration asks for an account name and creates that account with an ow
 The customer header now includes an account switcher with the current account, membership role, and links to other active accounts. The account list and workspace entry share a fresh membership query, requiring an active verified user, active organization, and active viewer/reviewer membership. Owner status does not bypass property grants. Suspended organizations and revoked memberships disappear on the next request.
 
 Account context stays in the URL, including team pages, rather than a mutable session-wide selection. Two browser tabs can safely show different accounts. `/workspace` remains the all-accounts chooser; manager home routing and the separate read-only customer-view banner remain intact. Customer-facing signup/navigation uses “account”; the database retains `organizations` to distinguish customer accounts from utility accounts.
+
+
+## Owner member access management (implemented September 29, 2026)
+
+From Team → Manage access, an active verified account owner can change another member's viewer/reviewer role and property grants or deactivate/restore the membership. Changes only affect this account. Owner access cannot be edited through this feature; ownership transfer is not implemented. Managers viewing a customer see no edit controls and cannot use the customer's identity for writes.
+
+The write locks the organization and membership, rechecks ownership and account status, validates selected properties against the owner's current grants, and atomically replaces grants. Deactivation clears all property grants; restoration requires explicit selection. Every actual change records the actor, reason, version and before/after role, active state, property IDs and names. A stale version fails without mutation. Identical submissions create no history entry. This is scoped access-change history, not a complete operational audit trail.
+
+Tests cover cross-account/member/property boundaries, owner protection, role escalation, deactivation/restoration, membership isolation, history and stale edits.

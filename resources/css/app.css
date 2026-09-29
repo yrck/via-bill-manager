@@ -49,3 +49,5 @@
 .account-switcher-footer{display:flex;justify-content:space-between;padding:14px 16px;background:#f8faf8;border-top:1px solid #edf2ee;font-size:11px}
 .account-switcher-empty{padding:12px;line-height:1.7;font-size:12px}
 @media(max-width:600px){.account-switcher{width:220px}.account-switcher-menu{right:-50px}.workspace-nav:has(.account-switcher){gap:10px}.account-switcher-label strong{font-size:11px}}
+
+.review-form .access-reason-label{margin-top:24px}.review-event{overflow-wrap:anywhere}.panel>.pagination{padding:12px 20px}

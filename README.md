@@ -4,7 +4,7 @@ Laravel 13 + Livewire 4 + Tailwind 4 + PostgreSQL 17, with Docker-based PHP deve
 
 ## Product direction
 
-A public customer-facing SaaS application: customer accounts and isolated organization workspaces, plus a separate VIA management suite for customer administration. Initial sign-in will use email/password; Microsoft sign-in can follow later. Customer registration, email/password login, email verification, password recovery and isolated workspace entry are implemented. Organization owners can invite multiple teammates with individual logins, viewer/reviewer roles and selected property access. The staff management suite now includes a customer directory, account/team overview, and organization suspension/restoration with recorded reasons and actors.
+A public customer-facing SaaS application: customer accounts and isolated organization workspaces, plus a separate VIA management suite for customer administration. Initial sign-in will use email/password; Microsoft sign-in can follow later. Customer registration, email/password login, email verification, password recovery and isolated workspace entry are implemented. Account owners can invite multiple teammates with individual logins, viewer/reviewer roles and selected property access. They can also change member roles/property grants or deactivate and restore memberships, with recorded reasons and before/after history. The staff management suite now includes a customer directory, account/team overview, and organization suspension/restoration with recorded reasons and actors.
 
 ## Current increment
 
@@ -45,10 +45,12 @@ The base test case forces in-memory SQLite before database refresh and removes a
 
 1. Review dashboard behavior and resolve the core second-account checklist.
 2. Extend authenticated customer workspaces with location setup and scoped bill detail/review.
-3. Extend owner team management with member role/access changes and removal; extend VIA customer management beyond organization status.
+3. Extend VIA customer management beyond organization status; owner member access management is implemented.
 4. Refine persisted portfolio/account fields using sample locations and bills; add statement versioning.
 5. Implement one intake → validation → exception → evidence → dashboard path.
 6. Add interval storage using TimescaleDB once actual meter workloads are available.
+
+Before the free-versus-paid subscription discussion, the functional core still needs location/utility-account setup, authenticated bill browsing/review with actor history, and a tested intake-to-evidence-to-dashboard workflow. Sample bills and locations will inform intake fields and validation. Subscriptions, pricing and plan limits are intentionally deferred until those workflows are established. Coolify production readiness remains a separate launch requirement.
 
 Planning documents are in [docs](docs/README.md).
 

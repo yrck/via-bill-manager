@@ -6,6 +6,7 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\Platform\CustomerController;
 use App\Http\Controllers\Platform\CustomerViewController;
 use App\Http\Controllers\Platform\ManagerController;
+use App\Http\Controllers\TeamAccessController;
 use App\Http\Controllers\TeamController;
 use App\Http\Middleware\RequireActiveCustomer;
 use App\Http\Middleware\RequirePlatformStaff;
@@ -50,6 +51,8 @@ Route::get('/invitations/{token}', [InvitationController::class, 'show'])->where
 Route::post('/invitations/{token}/register', [InvitationController::class, 'register'])->where('token', '[A-Za-z0-9]{64}')->middleware(['guest', 'throttle:5,1'])->name('invitations.register');
 Route::middleware(['auth', RequireActiveCustomer::class, 'auth.session', 'verified'])->group(function () {
     Route::post('/invitations/{token}/accept', [InvitationController::class, 'accept'])->where('token', '[A-Za-z0-9]{64}')->middleware('throttle:10,1')->name('invitations.accept');
+    Route::get('/workspace/{organization}/team/members/{membership}', [TeamAccessController::class, 'edit'])->whereNumber(['organization', 'membership'])->name('team.member.edit');
+    Route::put('/workspace/{organization}/team/members/{membership}', [TeamAccessController::class, 'update'])->whereNumber(['organization', 'membership'])->middleware('throttle:20,1')->name('team.member.update');
     Route::get('/workspace/{organization}/team', [TeamController::class, 'index'])->whereNumber('organization')->name('team.index');
     Route::post('/workspace/{organization}/team/invite', [TeamController::class, 'invite'])->whereNumber('organization')->middleware('throttle:10,1')->name('team.invite');
     Route::post('/workspace/{organization}/team/invitations/{invitation}/cancel', [TeamController::class, 'cancel'])->whereNumber(['organization', 'invitation'])->name('team.cancel');
