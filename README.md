@@ -10,7 +10,7 @@ A public customer-facing SaaS application: customer accounts and isolated organi
 
 A working local-only dashboard using fictional September 2026 statements. Property scoping, missing/review/due filters, period-close view and evidence drill-down work. Summary totals and queue entries now query persistent PostgreSQL records. The Portfolio page lists four fictional locations and 24 utility accounts; expected bills are separate from the 21 received statements. The bill register supports property/status filters and account search. Statement detail pages support persistent demo review notes, verification and reopening, with original findings preserved and stale-tab protection. Other navigation entries are visibly planned.
 
-The organization/property authorization foundation now scopes authenticated customer workspace locations and counts. Owners can create locations and utility accounts inside their customer workspace; assigned members can view them. Customer bill detail/review integration, Microsoft SSO, ingestion, payments and a full operational audit trail remain unimplemented. No real data has been loaded. Review history identifies only a local demo operator. The demo requires `DEMO_ENABLED=true` and `APP_ENV=local` (or testing); it returns 404 in other environments. This Compose configuration binds only localhost and uses Artisan's development server. It is not a production deployment.
+The organization/property authorization foundation now scopes authenticated customer workspace locations and counts. Owners can create locations and utility accounts inside their customer workspace; assigned members can view them. Authenticated bill browsing, property/status filters, detail pages, and reviewer verification/reopening with actor history are implemented. Microsoft SSO, ingestion, payments and a full operational audit trail remain unimplemented. No real data has been loaded. Anonymous demo review history identifies only a local demo operator; customer review history separately records the signed-in reviewer. The demo requires `DEMO_ENABLED=true` and `APP_ENV=local` (or testing); it returns 404 in other environments. This Compose configuration binds only localhost and uses Artisan's development server. It is not a production deployment.
 
 ## Local setup
 
@@ -44,13 +44,13 @@ The base test case forces in-memory SQLite before database refresh and removes a
 ## Next slices
 
 1. Review dashboard behavior and resolve the core second-account checklist.
-2. Extend authenticated customer workspaces with scoped bill detail/review; initial location and utility-account creation is implemented.
+2. Connect bill intake to the authenticated bill register and customer dashboard; scoped detail/review and initial location/utility-account creation are implemented.
 3. Extend VIA customer management beyond organization status; owner member access management is implemented.
 4. Refine persisted portfolio/account fields using sample locations and bills; add statement versioning.
 5. Implement one intake → validation → exception → evidence → dashboard path.
 6. Plan Smart Meter Texas, MISO and PJM connections; add interval storage using TimescaleDB once actual meter workloads are available.
 
-Before the free-versus-paid subscription discussion, the functional core still needs authenticated bill browsing/review with actor history, and a tested intake-to-evidence-to-dashboard workflow. Sample bills and locations will inform intake fields and validation. Subscriptions, pricing and plan limits are intentionally deferred until those workflows are established. Coolify production readiness remains a separate launch requirement.
+Before the free-versus-paid subscription discussion, the functional core still needs a tested intake-to-evidence-to-dashboard workflow. Sample bills and locations will inform intake fields and validation. Subscriptions, pricing and plan limits are intentionally deferred until those workflows are established. Coolify production readiness remains a separate launch requirement.
 
 Planning documents are in [docs](docs/README.md).
 
@@ -66,4 +66,4 @@ docker compose exec app php artisan platform:staff staff@nu-devco.com
 docker compose exec app php artisan platform:staff staff@nu-devco.com --revoke
 ```
 
-Replace the placeholder with the intended staff account. No staff grant is created by registration, migrations or the demo seeder. This command does not create a login or verify an email. Managers can enter a recorded read-only customer view from customer details, choosing an active verified member and providing a reason. The view uses that member’s property grants, keeps the manager identity intact, and has a return-to-management button. The management suite shows organization ownership, membership/onboarding status and status-change history. Customer bill access remains subject to explicit organization/property grants.
+Replace the placeholder with the intended staff account. No staff grant is created by registration, migrations or the demo seeder. This command does not create a login or verify an email. Managers can enter a recorded read-only customer view from customer details, choosing an active verified member and providing a reason. The view uses that member’s property grants, keeps the manager identity intact, and has a return-to-management button. The management suite shows organization ownership, membership/onboarding status and status-change history. Customer bill access remains subject to explicit organization/property grants. “Browse bills” opens the authenticated register; reviewers can verify/reopen received statements with a reason and stale-version protection. Manager customer views include the same register/detail pages without review controls. Adding a utility account does not generate bills; accounts stay empty until intake is implemented.

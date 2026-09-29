@@ -1,0 +1,20 @@
+<x-customer-layout :customer-view="$customerView"><main>
+<a class="back-link" href="{{ $customerView ? route('platform.customer-view.bills') : route('customer.bills', $organization->id) }}">← Bill register</a>
+<div class="heading"><div><div class="eyebrow">{{ $bill->location }} · {{ \Carbon\CarbonImmutable::parse($bill->period)->format('M Y') }}</div><h1>{{ $bill->reference }}</h1><p>{{ $bill->supplier }} · {{ $bill->commodity }}</p></div><span class="status-badge {{ $bill->display_status }}">{{ ['review' => 'Needs review', 'verified' => 'Verified', 'missing' => 'Missing statement', 'awaiting' => 'Awaiting statement'][$bill->display_status] ?? 'Unknown status' }}</span></div>
+@include('partials.auth-feedback')
+<div class="bill-detail-grid"><div>
+<section class="panel"><div class="panel-heading"><h2>Statement summary</h2></div><dl class="statement-summary"><div><dt>Charges</dt><dd>{{ $bill->charges_cents === null ? 'Not received' : $bill->currency.' '.number_format($bill->charges_cents / 100, 2) }}</dd></div><div><dt>Expected by</dt><dd>{{ $bill->expected_by }}</dd></div><div><dt>Received on</dt><dd>{{ $bill->received_on ?? 'Not received' }}</dd></div><div><dt>Due on</dt><dd>{{ $bill->due_on ?? 'Not available' }}</dd></div></dl></section>
+<section class="panel"><div class="panel-heading"><h2>{{ $bill->statement_id ? 'Recorded finding' : 'Collection status' }}</h2></div><div class="detail-body"><p class="finding-copy">{{ $bill->evidence ?? 'No statement has been received for this expected bill.' }}</p></div></section>
+<section class="panel document-placeholder"><h2>No source document available</h2><p>Document intake and preview are not implemented yet. Verification records a review decision; it does not authorize or confirm payment.</p></section>
+<section class="panel"><div class="panel-heading"><h2>Review history</h2></div>
+@forelse($history as $event)<article class="review-event"><div><strong>{{ $event->to_status === 'verified' ? 'Verified' : 'Reopened' }} · {{ $event->actor_name }}</strong><time>{{ \Carbon\CarbonImmutable::parse($event->created_at)->utc()->format('M j, Y H:i') }} UTC</time></div><p>{{ $event->note }}</p></article>@empty<div class="empty">No review decisions recorded.</div>@endforelse
+<div class="pagination">{{ $history->links() }}</div></section>
+</div><aside class="panel review-form">
+@if($canReview && in_array($bill->status, ['review', 'verified']))
+<h2>{{ $bill->status === 'review' ? 'Review statement' : 'Reopen statement' }}</h2><p>Record your reasoning. The original finding remains visible in the statement record.</p>
+<form method="POST" action="{{ route('customer.bills.review', [$organization->id, $bill->id]) }}">@csrf
+<input type="hidden" name="version" value="{{ old('version', $bill->review_version) }}"><input type="hidden" name="decision" value="{{ $bill->status === 'review' ? 'verify' : 'reopen' }}">
+<label for="review-note">{{ $bill->status === 'review' ? 'Resolution note' : 'Reason to reopen' }}</label><textarea id="review-note" name="note" required minlength="10" maxlength="2000" rows="6">{{ old('note') }}</textarea><small>10–2,000 characters. Your name and the time are recorded.</small><button class="primary-button">{{ $bill->status === 'review' ? 'Save as verified' : 'Reopen review' }}</button></form>
+@elseif(!$bill->statement_id)<h2>Awaiting a statement</h2><p>There is no received statement to review. Charges remain unknown until intake.</p>
+@else<h2>Read-only access</h2><p>{{ $customerView ? 'Review actions are unavailable while viewing as a customer.' : 'Only reviewers with access to this property can change its review status.' }}</p>@endif
+</aside></div></main></x-customer-layout>

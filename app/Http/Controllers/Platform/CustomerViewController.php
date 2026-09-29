@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Platform;
 
 use App\Access\BillingAccess;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\CustomerBillController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -55,6 +56,20 @@ class CustomerViewController extends Controller
             'invitations' => DB::table('organization_invitations')->where('organization_id', $record->id)->whereNull('accepted_at')->whereNull('revoked_at')->where('expires_at', '>', now())->orderByDesc('id')->get(),
             'locations' => $access->locations($target, $record->id)->orderBy('locations.name')->get(),
         ]);
+    }
+
+    public function bills(Request $request, CustomerBillController $bills)
+    {
+        [$event, $record, $target] = $this->context($request);
+
+        return $bills->indexFor($request, $target, $record, $event);
+    }
+
+    public function bill(Request $request, int $bill, CustomerBillController $bills)
+    {
+        [$event, $record, $target] = $this->context($request);
+
+        return $bills->showFor($target, $record, $bill, $event);
     }
 
     private function context(Request $request): array

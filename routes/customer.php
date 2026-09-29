@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\CustomerAuthController;
+use App\Http\Controllers\CustomerBillController;
 use App\Http\Controllers\CustomerLocationController;
 use App\Http\Controllers\CustomerWorkspaceController;
 use App\Http\Controllers\InvitationController;
@@ -51,6 +52,9 @@ Route::middleware('auth')->group(function () {
 Route::get('/invitations/{token}', [InvitationController::class, 'show'])->where('token', '[A-Za-z0-9]{64}')->middleware('throttle:30,1')->name('invitations.show');
 Route::post('/invitations/{token}/register', [InvitationController::class, 'register'])->where('token', '[A-Za-z0-9]{64}')->middleware(['guest', 'throttle:5,1'])->name('invitations.register');
 Route::middleware(['auth', RequireActiveCustomer::class, 'auth.session', 'verified'])->group(function () {
+    Route::get('/workspace/{organization}/bills', [CustomerBillController::class, 'index'])->whereNumber('organization')->name('customer.bills');
+    Route::get('/workspace/{organization}/bills/{bill}', [CustomerBillController::class, 'show'])->whereNumber(['organization', 'bill'])->name('customer.bills.show');
+    Route::post('/workspace/{organization}/bills/{bill}/review', [CustomerBillController::class, 'review'])->whereNumber(['organization', 'bill'])->middleware('throttle:20,1')->name('customer.bills.review');
     Route::get('/workspace/{organization}/locations/create', [CustomerLocationController::class, 'create'])->whereNumber('organization')->name('customer.locations.create');
     Route::post('/workspace/{organization}/locations', [CustomerLocationController::class, 'store'])->whereNumber('organization')->middleware('throttle:20,1')->name('customer.locations.store');
     Route::get('/workspace/{organization}/locations/{location}', [CustomerLocationController::class, 'show'])->whereNumber(['organization', 'location'])->name('customer.locations.show');
@@ -69,6 +73,8 @@ Route::prefix('management')->middleware(['auth', RequireActiveCustomer::class, '
     Route::post('/users/{user}/manager', [ManagerController::class, 'update'])->whereNumber('user')->middleware('throttle:20,1')->name('platform.managers.update');
     Route::post('/customers/{organization}/view', [CustomerViewController::class, 'start'])->whereNumber('organization')->name('platform.customer-view.start');
     Route::get('/customer-view', [CustomerViewController::class, 'show'])->name('platform.customer-view');
+    Route::get('/customer-view/bills', [CustomerViewController::class, 'bills'])->name('platform.customer-view.bills');
+    Route::get('/customer-view/bills/{bill}', [CustomerViewController::class, 'bill'])->whereNumber('bill')->name('platform.customer-view.bill');
     Route::get('/customer-view/team', [CustomerViewController::class, 'team'])->name('platform.customer-view.team');
     Route::post('/customer-view/stop', [CustomerViewController::class, 'stop'])->name('platform.customer-view.stop');
     Route::get('/customers', [CustomerController::class, 'index'])->name('platform.customers.index');
