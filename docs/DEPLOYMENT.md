@@ -59,3 +59,7 @@ Before sharing the server, check HTTPS, `/up`, login/registration, delivery of v
 The repository supplies deployment packaging; DNS, TLS, Coolify resource settings, backups and server access still need to be configured on the target host. Manual PDF intake/downloads are available. Automated extraction, document preview, subscriptions and external integrations remain unfinished. PHP allows 10 MiB files / 12 MiB request bodies; the application validates PDFs up to 8 MiB. Rebuild the app image for these limits to take effect.
 
 Reference: [Coolify Docker Compose documentation](https://coolify.io/docs/applications/builds/docker-compose).
+
+### HTTPS behind Coolify
+
+Set `APP_URL` to the full **https://** public hostname even when using Coolify's generated domain. Production Laravel forces generated links/assets to HTTPS when this setting uses HTTPS; nginx emits relative redirects so TLS termination does not downgrade the initial `/` redirect to HTTP. Explicit trusted proxy addresses are still required for forwarded client IP, port and scheme handling. Redeploy after changing runtime variables. Verify the root redirect, `/workspace` guest redirect, login form action and stylesheet URLs all remain HTTPS. A valid certificate does not by itself guarantee correct application URLs.
