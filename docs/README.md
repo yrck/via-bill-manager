@@ -4,6 +4,7 @@
 - [Second-account review](ACCOUNT-REVIEW-CHECKLIST.md): 24 open questions and the examples needed to resolve them.
 - [Dashboard and Laravel](DASHBOARD-AND-LARAVEL.md): product direction and prior-project stack alignment.
 - [Persistent demo](PERSISTENT-DEMO.md): implemented data model, demo assumptions and next slice.
+- [Private test accounts](TEST-ACCOUNTS.md): controlled meter pilot provisioning, owner onboarding and private manifest handling.
 - [Storage architecture](STORAGE.md): PostgreSQL and Timescale boundary.
 - [Access control](ACCESS-CONTROL.md): tested permission foundation and planned customer accounts, onboarding and VIA management suite.
 - [Coolify deployment](DEPLOYMENT.md): deployment target and planned production requirements.

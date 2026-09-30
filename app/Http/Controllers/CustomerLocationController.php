@@ -53,6 +53,8 @@ class CustomerLocationController extends Controller
 
         return view('customer.location', [
             'organization' => $account, 'location' => $record, 'commodities' => self::COMMODITIES,
+            'servicePoints' => $access->servicePoints($request->user(), $organization)->where('location_id', $location)->orderBy('label')->get(),
+            'meters' => DB::table('meters')->whereIn('service_point_id', $access->servicePoints($request->user(), $organization)->where('location_id', $location)->select('id'))->get()->groupBy('service_point_id'),
             'accounts' => $access->accounts($request->user(), $organization)->where('location_id', $location)->orderBy('supplier')->orderBy('reference')->paginate(25),
         ]);
     }

@@ -1,5 +1,7 @@
 <x-customer-layout :customer-view="$customerView ?? null"><main><a class="back-link" href="{{ isset($customerView) ? route('platform.customers.show', $organization->id) : route('customer.home') }}">← {{ isset($customerView) ? 'Customer details' : 'My accounts' }}</a><div class="heading"><div><div class="eyebrow">CUSTOMER WORKSPACE</div><h1>{{ $organization->name }}</h1><p>Your account's utility-bill workspace.</p></div></div>
 @include('partials.auth-feedback')
+@if($organization->is_test_account)<div class="review-notice">Test account · Private development data
+@if($organization->legal_name)<br>{{ $organization->legal_name }}@endif</div>@endif
 <p class="team-entry"><a class="inspect" href="{{ isset($customerView) ? route('platform.customer-view.bills') : route('customer.bills', $organization->id) }}">Browse bills →</a></p>
 @if($organization->owner_user_id === ($viewUserId ?? auth()->id()))<p class="team-entry"><a class="inspect" href="{{ isset($customerView) ? route('platform.customer-view.team') : route('team.index', $organization->id) }}">Manage team & invitations →</a></p>@endif
 <section class="metrics customer-metrics"><div class="metric"><span>Accessible locations</span><strong>{{ $locations->count() }}</strong></div><div class="metric"><span>Utility accounts</span><strong>{{ $accountCount }}</strong></div><div class="metric"><span>Received statements</span><strong>{{ $statementCount }}</strong></div></section>

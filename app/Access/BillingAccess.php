@@ -37,6 +37,13 @@ class BillingAccess
         });
     }
 
+    public function servicePoints(?User $user, int $organizationId): Builder
+    {
+        return DB::table('service_points')->where('organization_id', $organizationId)->whereIn('location_id',
+            $this->locations($user, $organizationId)->select('locations.id')
+        );
+    }
+
     public function accounts(?User $user, int $organizationId, bool $forReview = false): Builder
     {
         return DB::table('utility_accounts')->whereIn('location_id',
