@@ -55,19 +55,35 @@ class CustomerBillController extends Controller
 
     public function show(Request $request, int $organization, int $bill)
     {
-        return $this->showFor($request->user(), $this->account($request, $organization), $bill);
+        return $this->showFor($request->user(), $this->account($request, $organization), $bill, null, $request);
     }
 
-    public function showFor(User $user, object $organization, int $bill, ?object $customerView = null)
+    public function showFor(User $user, object $organization, int $bill, ?object $customerView = null, ?Request $request = null)
     {
         $record = app(CustomerBills::class)->query($user, $organization->id)->where('e.id', $bill)->first();
         abort_unless($record, 404);
+        $selection = $request?->validate(['revision' => ['nullable', 'integer', 'min:1']]) ?? [];
+        $currentNumber = $record->revision_number;
+        $number = (int) ($selection['revision'] ?? $currentNumber);
+        $revision = DB::table('statement_revisions')->where('statement_id', $record->statement_id)->where('number', $number)->first();
+        abort_if(isset($selection['revision']) && ! $revision, 404);
+        $historical = $number !== (int) $currentNumber;
+        if ($historical && $revision) {
+            $snapshot = json_decode($revision->snapshot, true, 512, JSON_THROW_ON_ERROR);
+            foreach (['charges_cents', 'currency', 'received_on', 'due_on', 'invoice_number', 'issued_on', 'service_start', 'service_end', 'balance_forward_cents', 'amount_due_cents', 'usage_kwh', 'evidence'] as $field) {
+                $record->$field = $snapshot[$field] ?? null;
+            }
+            $record->display_status = 'superseded';
+        }
 
         return view('customer.bill', [
             'organization' => $organization, 'customerView' => $customerView, 'bill' => $record,
-            'canReview' => ! $customerView && app(BillingAccess::class)->canReviewBill($user, $organization->id, $bill),
-            'document' => DB::table('bill_documents')->where('organization_id', $organization->id)->where('statement_id', $record->statement_id)->first(),
-            'history' => DB::table('customer_review_decisions')->where('statement_id', $record->statement_id)->orderByDesc('version')->paginate(10),
+            'canReview' => ! $customerView && ! $historical && app(BillingAccess::class)->canReviewBill($user, $organization->id, $bill),
+            'document' => $revision ? DB::table('bill_documents')->where('organization_id', $organization->id)->where('statement_id', $record->statement_id)->where('id', $revision->document_id)->first() : null,
+            'revisions' => DB::table('statement_revisions')->where('statement_id', $record->statement_id)->orderByDesc('number')->get(),
+            'lineItems' => DB::table('statement_line_items')->where('statement_revision_id', $revision?->id)->orderBy('position')->get(),
+            'selectedRevision' => $number, 'historical' => $historical,
+            'history' => DB::table('customer_review_decisions')->where('statement_id', $record->statement_id)->orderByDesc('version')->paginate(10)->withQueryString(),
         ]);
     }
 

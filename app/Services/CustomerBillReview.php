@@ -26,6 +26,7 @@ class CustomerBillReview
             DB::table('statements')->where('id', $statement->id)->update(['status' => $to, 'review_version' => $statement->review_version + 1]);
             DB::table('customer_review_decisions')->insert([
                 'statement_id' => $statement->id, 'actor_id' => $user->id, 'actor_name' => $user->name,
+                'revision_number' => $statement->revision_number,
                 'version' => $statement->review_version + 1, 'from_status' => $from, 'to_status' => $to,
                 'note' => $data['note'], 'created_at' => now(),
             ]);

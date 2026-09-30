@@ -72,7 +72,7 @@ class CustomerViewController extends Controller
     {
         [$event, $record, $target] = $this->context($request);
 
-        return $bills->showFor($target, $record, $bill, $event);
+        return $bills->showFor($target, $record, $bill, $event, $request);
     }
 
     public function document(Request $request, int $bill, BillIntakeController $documents)
@@ -81,7 +81,9 @@ class CustomerViewController extends Controller
         $statement = app(BillingAccess::class)->statements($target, $record->id)->where('expected_bill_id', $bill)->first();
         abort_unless($statement, 404);
 
-        return $documents->document($record->id, $statement->id);
+        $data = $request->validate(['revision' => ['nullable', 'integer', 'min:1']]);
+
+        return $documents->document($record->id, $statement->id, (int) ($data['revision'] ?? $statement->revision_number));
     }
 
     private function context(Request $request): array

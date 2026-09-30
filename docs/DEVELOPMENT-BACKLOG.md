@@ -32,7 +32,7 @@ Both contribute requirements. B clarifies intended packaging; A retains useful d
 | Security, portability and continuity — A/B Security / Business Continuity; B service agreement | Application access checks and deployment packaging exist. Full operational controls, export/offboarding and recovery proof do not. | B16/B17 add explicit release gates and customer-data lifecycle work. Vendor hosting/certification claims do not transfer to this application. |
 | Platform, capture and interval modules — A base/optional overview; B Scope / Order Form | No subscriptions or entitlements implemented. | B18 informs later free/paid design without adopting proposal pricing or equating a physical meter with a billable utility account. |
 
-## Implemented baseline
+## Implemented baseline at proposal review
 
 Registration creates a named customer account; invited users join existing accounts. Verification, recovery, multiple memberships, property grants and account switching are implemented. Eligible employees require an explicit manager grant. Customer-view mode remains recorded and read-only. Customers can create locations/accounts, upload and manually enter a USD electricity PDF, browse bills, download authorized originals, and verify/reopen statements with history. The workspace lists recent bills needing review.
 
@@ -42,7 +42,9 @@ The anonymous local-only demo has richer fictional queues and metrics; those are
 
 Priority is implementation order, not a promise of delivery dates. Each item must preserve organization/property scoping, manager identity and read-only preview, actor history, original evidence, and safe concurrent updates.
 
-### B01 — Statement corrections and detailed charges (partial foundation; next build)
+### B01 — Statement corrections and detailed charges (partially implemented)
+
+September 30 increment: reasoned corrections, historical snapshots/PDFs, version-specific review history, stale-write protection and optional reconciled charge lines are implemented. Current totals use the latest statement only. See [statement history](STATEMENT-HISTORY.md). Voiding, multiple independent monthly bills, split supplier reconciliation and explicit payment components remain open. The earlier baseline/crosswalk records the proposal-review state before this increment; the conditions below describe the complete epic.
 
 - Introduce explicit original/revised/void relationships, effective version selection, correction reasons and retained PDFs. Support legitimate multiple statements within a month and split supply/delivery relationships without double counting.
 - Capture line-item description, category, quantity/unit, rate, amount and source reference. Categories include consumption, demand, fixed charges, taxes, late fees, deposits and other adjustments. Preserve unknown categories for review.

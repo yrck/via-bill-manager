@@ -56,6 +56,8 @@ Route::middleware(['auth', RequireActiveCustomer::class, 'auth.session', 'verifi
     Route::get('/workspace/{organization}/bills/upload', [BillIntakeController::class, 'create'])->whereNumber('organization')->name('customer.bills.upload');
     Route::post('/workspace/{organization}/bills', [BillIntakeController::class, 'store'])->whereNumber('organization')->middleware('throttle:10,1')->name('customer.bills.store');
     Route::get('/workspace/{organization}/bills/{bill}/document', [BillIntakeController::class, 'download'])->whereNumber(['organization', 'bill'])->name('customer.bills.document');
+    Route::get('/workspace/{organization}/bills/{bill}/correct', [BillIntakeController::class, 'correction'])->whereNumber(['organization', 'bill'])->name('customer.bills.correct');
+    Route::post('/workspace/{organization}/bills/{bill}/correct', [BillIntakeController::class, 'correct'])->whereNumber(['organization', 'bill'])->middleware('throttle:10,1')->name('customer.bills.correct.store');
     Route::get('/workspace/{organization}/bills', [CustomerBillController::class, 'index'])->whereNumber('organization')->name('customer.bills');
     Route::get('/workspace/{organization}/bills/{bill}', [CustomerBillController::class, 'show'])->whereNumber(['organization', 'bill'])->name('customer.bills.show');
     Route::post('/workspace/{organization}/bills/{bill}/review', [CustomerBillController::class, 'review'])->whereNumber(['organization', 'bill'])->middleware('throttle:20,1')->name('customer.bills.review');

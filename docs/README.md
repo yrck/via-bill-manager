@@ -1,6 +1,7 @@
 # Project documents
 
 - [Development backlog](DEVELOPMENT-BACKLOG.md): current priorities, both-proposal comparison, feature acceptance criteria and launch gates.
+- [Statement history](STATEMENT-HISTORY.md): implemented corrections, detailed charges, original evidence and migration behavior.
 - [Rebuild plan](REBUILD-PLAN.md): legacy page inventory and phased scope.
 - [Second-account review](ACCOUNT-REVIEW-CHECKLIST.md): 24 open legacy questions plus proposal follow-ups and the examples needed to resolve them.
 - [Dashboard and Laravel](DASHBOARD-AND-LARAVEL.md): product direction and prior-project stack alignment.

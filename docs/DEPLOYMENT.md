@@ -40,6 +40,8 @@ Images include dependencies and compiled frontend assets, with no repository bin
 
 ## Persistence and updates
 
+The statement-history migration preserves existing bills as version 1. Once corrections have been saved, rollback to the old one-document schema is blocked to prevent evidence loss. Take a complete backup before deploying; see [statement history](STATEMENT-HISTORY.md).
+
 The stack's `postgres-data` and `app-storage` named volumes persist across container replacement. Volume names are scoped by the Coolify resource/project; do not share external volume names with other applications. Keep the resource identity stable and never remove volumes to perform a routine update. Private storage is mounted only into application services, not nginx.
 
 Back up the database, private storage and application key before migrations. Test restoration before relying on the server. Redeploying an old image does not undo migrations: review compatibility and recover from backups when required. A clean deployment starts empty; it does not import the Mac database, uploads or login sessions.

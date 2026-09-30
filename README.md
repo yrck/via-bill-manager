@@ -43,9 +43,11 @@ The base test case forces in-memory SQLite before database refresh and removes a
 
 ## Next slices
 
+Statement corrections and optional detailed charges are now implemented: reviewers save a new version with a reason, retain original PDFs and prior reviews, and return the current bill to Needs review. Historical versions are read-only and excluded from current totals. See [statement history](docs/STATEMENT-HISTORY.md).
+
 The [development backlog](docs/DEVELOPMENT-BACKLOG.md) reconciles both supplied proposals with the implemented application and defines completion criteria.
 
-1. Review the private pilot workflow and add corrected/versioned statements with detailed charges.
+1. Review the implemented corrections/charge-detail workflow with the private pilot; define voiding and multiple independent bills per month using representative examples.
 2. Add explicit billing schedules, explainable findings, assigned exceptions and an actionable customer dashboard.
 3. Add reconciled reports/exports, then approval/accounting handoff and evidence-backed recovery tracking.
 4. Extend staged bulk intake, assisted extraction and authorized provider collection with visible failures and retries.
