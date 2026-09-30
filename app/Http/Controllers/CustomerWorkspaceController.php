@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Access\BillingAccess;
 use App\Access\CustomerAccounts;
+use App\Billing\CustomerBills;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -32,6 +33,7 @@ class CustomerWorkspaceController extends Controller
             'locations' => $access->locations($request->user(), $organization)->orderBy('locations.name')->get(),
             'accountCount' => $access->accounts($request->user(), $organization)->count(),
             'statementCount' => $access->statements($request->user(), $organization)->count(),
+            'reviewBills' => app(CustomerBills::class)->query($request->user(), $organization)->where('s.status', 'review')->orderByDesc('e.period')->limit(5)->get(),
         ]);
     }
 }

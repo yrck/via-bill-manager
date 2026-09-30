@@ -38,6 +38,13 @@ return [
             'report' => false,
         ],
 
+        'bills' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/documents'),
+            'serve' => false,
+            'throw' => true,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

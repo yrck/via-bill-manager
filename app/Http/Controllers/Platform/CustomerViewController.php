@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Platform;
 
 use App\Access\BillingAccess;
+use App\Billing\CustomerBills;
+use App\Http\Controllers\BillIntakeController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\CustomerBillController;
 use App\Models\User;
@@ -42,6 +44,7 @@ class CustomerViewController extends Controller
             'locations' => $access->locations($target, $record->id)->orderBy('locations.name')->get(),
             'accountCount' => $access->accounts($target, $record->id)->count(),
             'statementCount' => $access->statements($target, $record->id)->count(),
+            'reviewBills' => app(CustomerBills::class)->query($target, $record->id)->where('s.status', 'review')->orderByDesc('e.period')->limit(5)->get(),
         ]);
     }
 
@@ -70,6 +73,15 @@ class CustomerViewController extends Controller
         [$event, $record, $target] = $this->context($request);
 
         return $bills->showFor($target, $record, $bill, $event);
+    }
+
+    public function document(Request $request, int $bill, BillIntakeController $documents)
+    {
+        [$event, $record, $target] = $this->context($request);
+        $statement = app(BillingAccess::class)->statements($target, $record->id)->where('expected_bill_id', $bill)->first();
+        abort_unless($statement, 404);
+
+        return $documents->document($record->id, $statement->id);
     }
 
     private function context(Request $request): array

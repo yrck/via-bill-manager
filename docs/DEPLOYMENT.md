@@ -56,6 +56,6 @@ No secrets, databases or role grants are reused from Contract Manager. Creating 
 
 Before sharing the server, check HTTPS, `/up`, login/registration, delivery of verification/recovery/invite mail, account isolation, and manager access. `/portfolio` and `/bills` must return 404 because they are local demo routes. Customer bills are under `/workspace/{account}/bills`.
 
-The repository supplies deployment packaging; DNS, TLS, Coolify resource settings, backups and server access still need to be configured on the target host. Bill intake, documents, subscriptions and external integrations remain unfinished application features.
+The repository supplies deployment packaging; DNS, TLS, Coolify resource settings, backups and server access still need to be configured on the target host. Manual PDF intake/downloads are available. Automated extraction, document preview, subscriptions and external integrations remain unfinished. PHP allows 10 MiB files / 12 MiB request bodies; the application validates PDFs up to 8 MiB. Rebuild the app image for these limits to take effect.
 
 Reference: [Coolify Docker Compose documentation](https://coolify.io/docs/applications/builds/docker-compose).

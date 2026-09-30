@@ -2,6 +2,7 @@
 <a class="back-link" href="{{ $customerView ? route('platform.customer-view') : route('customer.workspace', $organization->id) }}">← {{ $organization->name }}</a>
 <div class="heading"><div><div class="eyebrow">BILL REGISTER</div><h1>Your bills, in view.</h1><p>Received statements and expected bills for the properties you can access.</p></div></div>
 @include('partials.auth-feedback')
+@if(!$customerView && $organization->role === 'reviewer')<p class="team-entry"><a class="inspect" href="{{ route('customer.bills.upload', $organization->id) }}">+ Upload statement</a></p>@endif
 <form method="GET" class="toolbar bill-filters">
 <label>Property<select name="location"><option value="">All accessible properties</option>@foreach($locations as $location)<option value="{{ $location->id }}" @selected(($filters['location'] ?? '') == $location->id)>{{ $location->name }}</option>@endforeach</select></label>
 <label>Status<select name="status"><option value="">All statuses</option>@foreach(['review' => 'Needs review', 'verified' => 'Verified', 'missing' => 'Missing statement', 'awaiting' => 'Awaiting statement'] as $value => $label)<option value="{{ $value }}" @selected(($filters['status'] ?? '') === $value)>{{ $label }}</option>@endforeach</select></label>
@@ -9,6 +10,6 @@
 </form>
 <section class="panel"><div class="panel-heading"><h2>Bills <span class="count">{{ $bills->total() }}</span></h2></div><div class="table-scroll"><table class="account-table bill-table"><thead><tr><th scope="col">Property / account</th><th scope="col">Period</th><th scope="col">Charges</th><th scope="col">Status</th><th scope="col">Open</th></tr></thead><tbody>
 @forelse($bills as $bill)<tr><td>{{ $bill->location }}<small>{{ $bill->reference }} · {{ $bill->supplier }}</small></td><td>{{ \Carbon\CarbonImmutable::parse($bill->period)->format('M Y') }}</td><td>{{ $bill->charges_cents === null ? 'Not received' : $bill->currency.' '.number_format($bill->charges_cents / 100, 2) }}</td><td><span class="status-badge {{ $bill->display_status }}">{{ ['review' => 'Needs review', 'verified' => 'Verified', 'missing' => 'Missing statement', 'awaiting' => 'Awaiting statement'][$bill->display_status] ?? 'Unknown status' }}</span></td><td><a class="inspect" href="{{ $customerView ? route('platform.customer-view.bill', $bill->id) : route('customer.bills.show', [$organization->id, $bill->id]) }}" aria-label="Open bill for {{ $bill->reference }} — {{ $bill->period }}">Open →</a></td></tr>
-@empty<tr><td colspan="5" class="empty">No bills match this view. Bill intake is not available yet; adding a utility account does not create statements.</td></tr>@endforelse
+@empty<tr><td colspan="5" class="empty">No bills match this view. Upload a statement to an accessible utility account to begin review.</td></tr>@endforelse
 </tbody></table></div><div class="pagination">{{ $bills->links() }}</div></section>
 </main></x-customer-layout>

@@ -66,6 +66,7 @@ class CustomerBillController extends Controller
         return view('customer.bill', [
             'organization' => $organization, 'customerView' => $customerView, 'bill' => $record,
             'canReview' => ! $customerView && app(BillingAccess::class)->canReviewBill($user, $organization->id, $bill),
+            'document' => DB::table('bill_documents')->where('organization_id', $organization->id)->where('statement_id', $record->statement_id)->first(),
             'history' => DB::table('customer_review_decisions')->where('statement_id', $record->statement_id)->orderByDesc('version')->paginate(10),
         ]);
     }
