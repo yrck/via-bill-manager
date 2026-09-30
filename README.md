@@ -24,14 +24,14 @@ docker compose run --rm --no-deps app composer install
 docker compose run --rm --no-deps app php artisan key:generate
 npm ci
 npm run build
-docker compose up -d db app
+docker compose up -d db app scheduler
 docker compose exec app php artisan migrate
 docker compose exec app php artisan db:seed
 ```
 
 Customer accounts start at http://localhost:8091/register or http://localhost:8091/login. Local verification/recovery emails use the log mailer; outbound delivery must be configured before deployment. Direct registration asks for an account name and creates a new empty customer account. Verified customers can open it from My accounts. The header switcher lists active account memberships and the current account; each account has its own URL so separate tabs can stay on different accounts. Owners can use “Add location” to create a property, then record utility account numbers, providers and utility types. Only the owner receives a grant automatically; existing teammates need explicit access. Owners can use “Manage team & invitations” inside their workspace to invite teammates. Invite registration creates only a login, then joins the existing organization after email verification and explicit acceptance.
 
-Open http://localhost:8091 or the bill register at http://localhost:8091/bills. The demo uses file sessions/cache. Run the guarded, repeatable seeder to populate fictional business records; rerunning it preserves existing records and edits. PostgreSQL has its own project volume and no host-exposed database port. `docker compose --profile background up -d worker scheduler` starts optional workers after migrations. `docker compose down` stops services without deleting the database volume.
+Open http://localhost:8091 or the bill register at http://localhost:8091/bills. The demo uses file sessions/cache. Run the guarded, repeatable seeder to populate fictional business records; rerunning it preserves existing records and edits. PostgreSQL has its own project volume and no host-exposed database port. `docker compose up -d scheduler` runs the daily billing-expectation refresh after migrations. `docker compose --profile background up -d worker` starts the optional queue worker. `docker compose down` stops services without deleting the database volume.
 
 ```sh
 docker compose exec app php artisan test
@@ -45,10 +45,12 @@ The base test case forces in-memory SQLite before database refresh and removes a
 
 Statement corrections and optional detailed charges are now implemented: reviewers save a new version with a reason, retain original PDFs and prior reviews, and return the current bill to Needs review. Historical versions are read-only and excluded from current totals. See [statement history](docs/STATEMENT-HISTORY.md).
 
+Owners can configure monthly billing expectations from Location → Billing schedule, including receipt day, grace period and a stop/resume month. The customer dashboard distinguishes missing, awaiting and unknown coverage. See [billing schedules](docs/BILLING-SCHEDULES.md).
+
 The [development backlog](docs/DEVELOPMENT-BACKLOG.md) reconciles both supplied proposals with the implemented application and defines completion criteria.
 
 1. Review the implemented corrections/charge-detail workflow with the private pilot; define voiding and multiple independent bills per month using representative examples.
-2. Add explicit billing schedules, explainable findings, assigned exceptions and an actionable customer dashboard.
+2. Review the implemented monthly schedules, grace periods and collection dashboard; add explainable findings and assigned exceptions next.
 3. Add reconciled reports/exports, then approval/accounting handoff and evidence-backed recovery tracking.
 4. Extend staged bulk intake, assisted extraction and authorized provider collection with visible failures and retries.
 5. Extend VIA management with onboarding progress, client-manager assignments, data health and quarterly follow-ups.
@@ -58,7 +60,7 @@ The first manual intake-to-evidence-to-dashboard workflow is implemented and tes
 
 Planning documents are in [docs](docs/README.md).
 
-The deployment target is **Coolify**, following the other project's operational approach. Use `/compose.coolify.yaml` for Git-based development-server deployments with nginx/PHP-FPM, compiled assets, dedicated PostgreSQL and migration gating. Background worker/scheduler services are optional. The default `compose.yaml` remains local-only. See [deployment notes](docs/DEPLOYMENT.md).
+The deployment target is **Coolify**, following the other project's operational approach. Use `/compose.coolify.yaml` for Git-based development-server deployments with nginx/PHP-FPM, compiled assets, dedicated PostgreSQL and migration gating. The scheduler runs by default for billing expectations; the queue worker is optional. The default `compose.yaml` remains local-only. See [deployment notes](docs/DEPLOYMENT.md).
 
 ## Platform management
 

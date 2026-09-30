@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\CustomerAuthController;
+use App\Http\Controllers\BillingScheduleController;
 use App\Http\Controllers\BillIntakeController;
 use App\Http\Controllers\CustomerBillController;
 use App\Http\Controllers\CustomerLocationController;
@@ -53,6 +54,8 @@ Route::middleware('auth')->group(function () {
 Route::get('/invitations/{token}', [InvitationController::class, 'show'])->where('token', '[A-Za-z0-9]{64}')->middleware('throttle:30,1')->name('invitations.show');
 Route::post('/invitations/{token}/register', [InvitationController::class, 'register'])->where('token', '[A-Za-z0-9]{64}')->middleware(['guest', 'throttle:5,1'])->name('invitations.register');
 Route::middleware(['auth', RequireActiveCustomer::class, 'auth.session', 'verified'])->group(function () {
+    Route::get('/workspace/{organization}/accounts/{account}/schedule', [BillingScheduleController::class, 'show'])->whereNumber(['organization', 'account'])->name('customer.accounts.schedule');
+    Route::post('/workspace/{organization}/accounts/{account}/schedule', [BillingScheduleController::class, 'store'])->whereNumber(['organization', 'account'])->middleware('throttle:10,1')->name('customer.accounts.schedule.store');
     Route::get('/workspace/{organization}/bills/upload', [BillIntakeController::class, 'create'])->whereNumber('organization')->name('customer.bills.upload');
     Route::post('/workspace/{organization}/bills', [BillIntakeController::class, 'store'])->whereNumber('organization')->middleware('throttle:10,1')->name('customer.bills.store');
     Route::get('/workspace/{organization}/bills/{bill}/document', [BillIntakeController::class, 'download'])->whereNumber(['organization', 'bill'])->name('customer.bills.document');

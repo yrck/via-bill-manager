@@ -30,11 +30,11 @@ Set these in Coolify, not Git or build arguments:
 
 Even on a development server, this stack fixes `APP_ENV=production`, `APP_DEBUG=false`, secure/encrypted database sessions, and `DEMO_ENABLED=false`. The local fictional dashboard/portfolio/bill routes remain unavailable. Visiting `/` redirects to `/workspace`, which sends guests to sign-in. Start new customer accounts at `/register`. Do not change the environment to `local` to expose the anonymous demo remotely.
 
-## Startup and optional background processes
+## Startup and background processes
 
-The default stack runs `db`, a one-shot `migrate` job, `app` (PHP-FPM) and `web` (nginx). Migrations must succeed before PHP starts. No demo seeder, sample data, user or role grant runs during deployment. The web health check requests Laravel `/up`. This is a liveness check, not a database/mail end-to-end readiness test.
+The default stack runs `db`, a one-shot `migrate` job, `app` (PHP-FPM), `web` (nginx) and `scheduler`. Migrations must succeed before PHP starts. No demo seeder, sample data, user or role grant runs during deployment. The web health check requests Laravel `/up`. This is a liveness check, not a database/mail end-to-end readiness test.
 
-Worker and scheduler definitions are reserved behind the **background** Compose profile. They are not needed by the currently synchronous customer mail and review workflows. Enable that profile through the deployment's Compose invocation when background jobs or schedules are implemented; in a CLI deployment use `docker compose -f compose.coolify.yaml --profile background up -d`. Keep one scheduler instance. The worker stops gracefully with time to finish a job.
+The scheduler now runs by default and refreshes configured billing expectations daily at 01:10 UTC. Keep one scheduler instance. Run `php artisan billing:refresh-schedules` in the app container for an immediate refresh after downtime. Unconfigured accounts are never assigned schedules automatically. The queue worker remains optional behind the **background** Compose profile; enable it when queued imports or mail are introduced. Synchronous schedule generation does not require a worker.
 
 Images include dependencies and compiled frontend assets, with no repository bind mount. PostgreSQL and PHP have no published host ports. Only `web` should receive a public domain. Application logs go to stderr; nginx access logs omit URL paths/query strings because invitations and verification URLs contain tokens. Application error logs still require restricted access.
 

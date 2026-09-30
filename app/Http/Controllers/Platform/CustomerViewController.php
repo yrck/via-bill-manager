@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Platform;
 
 use App\Access\BillingAccess;
-use App\Billing\CustomerBills;
+use App\Billing\CustomerOverview;
 use App\Http\Controllers\BillIntakeController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\CustomerBillController;
@@ -39,13 +39,15 @@ class CustomerViewController extends Controller
     {
         [$event, $record, $target] = $this->context($request);
 
+        $filters = $request->validate(['period' => ['nullable', 'date_format:Y-m-01']]);
+        $period = $filters['period'] ?? today()->startOfMonth()->toDateString();
+
         return view('customer.workspace', [
             'organization' => $record, 'viewUserId' => $target->id, 'customerView' => $event,
             'locations' => $access->locations($target, $record->id)->orderBy('locations.name')->get(),
             'accountCount' => $access->accounts($target, $record->id)->count(),
             'statementCount' => $access->statements($target, $record->id)->count(),
-            'reviewBills' => app(CustomerBills::class)->query($target, $record->id)->where('s.status', 'review')->orderByDesc('e.period')->limit(5)->get(),
-        ]);
+        ] + app(CustomerOverview::class)->data($target, $record->id, $period));
     }
 
     public function team(Request $request, BillingAccess $access)

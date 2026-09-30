@@ -5,6 +5,7 @@
 @if(!$customerView && $organization->role === 'reviewer')<p class="team-entry"><a class="inspect" href="{{ route('customer.bills.upload', $organization->id) }}">+ Upload statement</a></p>@endif
 <form method="GET" class="toolbar bill-filters">
 <label>Property<select name="location"><option value="">All accessible properties</option>@foreach($locations as $location)<option value="{{ $location->id }}" @selected(($filters['location'] ?? '') == $location->id)>{{ $location->name }}</option>@endforeach</select></label>
+<label>Reporting month<input name="period" value="{{ $filters['period'] ?? '' }}" placeholder="YYYY-MM-01" pattern="[0-9]{4}-[0-9]{2}-01"></label>
 <label>Status<select name="status"><option value="">All statuses</option>@foreach(['review' => 'Needs review', 'verified' => 'Verified', 'missing' => 'Missing statement', 'awaiting' => 'Awaiting statement'] as $value => $label)<option value="{{ $value }}" @selected(($filters['status'] ?? '') === $value)>{{ $label }}</option>@endforeach</select></label>
 <label class="search-field">Account number or provider<input type="search" name="q" maxlength="150" value="{{ $filters['q'] ?? '' }}" placeholder="Search bills"></label><button class="inspect">Apply filters</button><a class="inspect" href="{{ $customerView ? route('platform.customer-view.bills') : route('customer.bills', $organization->id) }}">Reset</a>
 </form>

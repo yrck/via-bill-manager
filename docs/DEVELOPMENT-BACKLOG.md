@@ -54,6 +54,8 @@ September 30 increment: reasoned corrections, historical snapshots/PDFs, version
 
 ### B02 — Expected bills, collection coverage and actionable customer dashboard
 
+September 30 increment: owner-configured effective monthly rules, grace periods, stop/resume history, repeatable generation and selected-month coverage are implemented. Customer and read-only manager views include missing and review queues. See [billing schedules](BILLING-SCHEDULES.md). Irregular cycles, split supplier expectations, due-soon/payment context and provider-connection freshness remain open.
+
 - Configure effective-dated billing cadence, grace periods, inactive/closed accounts, separate supplier expectations and irregular billing. A new utility account or imported bill must not invent a recurring schedule.
 - Show missing/awaiting bills, review backlog, due-soon items and stale collection with visible scope, date basis and coverage denominators. Link each count to its underlying queue. Unconfigured expectations display unknown coverage.
 - **Done when:** a completed month and an incomplete month reconcile with their schedules; exclusions and late arrivals update counts correctly; due dates never produce an unsupported “unpaid” claim. Collections, financial charges and payable balance stay separate.

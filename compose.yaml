@@ -35,6 +35,5 @@ services:
   scheduler:
     <<: *app
     command: php artisan schedule:work
-    profiles: [background]
 volumes:
   postgres-data:

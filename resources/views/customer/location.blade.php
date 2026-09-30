@@ -8,7 +8,7 @@
 @foreach($servicePoints as $point)<tr><td>{{ $point->label }}</td><td>{{ $point->esi_id }}</td><td>@foreach($meters->get($point->id, collect()) as $meter)<div>{{ $meter->meter_number }}<small> · Observed {{ $meter->observed_on }}</small></div>@endforeach</td><td>{{ $point->source_document }}</td></tr>@endforeach
 </tbody></table></div></section>@endif
 <div class="bill-detail-grid"><section class="panel"><div class="panel-heading"><div><h2>Utility accounts <span class="count">{{ $accounts->total() }}</span></h2><p>Separate accounts for each bill you receive.</p></div></div>
-@forelse($accounts as $account)<div class="property-row"><div><strong>{{ $account->supplier }}</strong><small>{{ $account->commodity }}</small></div><span>{{ $account->reference }}</span></div>@empty<div class="empty"><h3>No utility accounts yet.</h3><p>The account owner can add an account number and provider from a bill.</p></div>@endforelse
+@forelse($accounts as $account)<div class="property-row"><div><strong>{{ $account->supplier }}</strong><small>{{ $account->commodity }}</small></div><div><span>{{ $account->reference }}</span><br><a class="inspect" href="{{ route('customer.accounts.schedule', [$organization->id, $account->id]) }}">Billing schedule →</a></div></div>@empty<div class="empty"><h3>No utility accounts yet.</h3><p>The account owner can add an account number and provider from a bill.</p></div>@endforelse
 <div class="pagination">{{ $accounts->links() }}</div></section>
 @if($organization->owner_user_id === auth()->id())
 <aside class="panel review-form"><h2>Add a utility account</h2><p>Use the account number printed on the bill. Meter and service-point identifiers will be managed separately when integrations are added.</p>

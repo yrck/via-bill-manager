@@ -27,8 +27,11 @@ class CustomerBillController extends Controller
 
     public function indexFor(Request $request, User $user, object $organization, ?object $customerView = null)
     {
-        $filters = $request->validate(['location' => ['nullable', 'integer', 'min:1'], 'status' => ['nullable', 'in:review,verified,missing,awaiting'], 'q' => ['nullable', 'string', 'max:150']]);
+        $filters = $request->validate(['location' => ['nullable', 'integer', 'min:1'], 'status' => ['nullable', 'in:review,verified,missing,awaiting'], 'q' => ['nullable', 'string', 'max:150'], 'period' => ['nullable', 'date_format:Y-m-01']]);
         $query = app(CustomerBills::class)->query($user, $organization->id);
+        if ($period = $filters['period'] ?? null) {
+            $query->where('e.period', $period);
+        }
         if ($location = $filters['location'] ?? null) {
             abort_unless(app(BillingAccess::class)->locations($user, $organization->id)->where('locations.id', $location)->exists(), 404);
             $query->where('l.id', $location);
@@ -37,7 +40,12 @@ class CustomerBillController extends Controller
             if (in_array($status, ['review', 'verified'])) {
                 $query->where('s.status', $status);
             } else {
-                $query->whereNull('s.id')->where('e.expected_by', $status === 'missing' ? '<' : '>=', today()->toDateString());
+                $query->whereNull('s.id');
+                if ($status === 'missing') {
+                    $query->where('e.expectation_source', '!=', 'intake')->whereRaw('COALESCE(e.missing_after, e.expected_by) < ?', [today()->toDateString()]);
+                } else {
+                    $query->where(fn ($where) => $where->where('e.expectation_source', 'intake')->orWhereRaw('COALESCE(e.missing_after, e.expected_by) >= ?', [today()->toDateString()]));
+                }
             }
         }
         if ($search = $filters['q'] ?? null) {
