@@ -1,0 +1,103 @@
+# Git-based Coolify application. Assign the HTTPS domain to web, internal port 80.
+x-app: &app
+  build:
+    context: .
+    dockerfile: Dockerfile.coolify
+    target: app
+  environment:
+    APP_NAME: VIA Bill Management
+    APP_ENV: production
+    APP_DEBUG: 'false'
+    APP_KEY: ${APP_KEY:?Set a stable Laravel application key}
+    APP_URL: ${APP_URL:?Set the public HTTPS URL}
+    DEMO_ENABLED: 'false'
+    TRUSTED_PROXIES: ${TRUSTED_PROXIES:?Set explicit reverse proxy IPs or CIDRs}
+    LOG_CHANNEL: stderr
+    LOG_LEVEL: warning
+    DB_CONNECTION: pgsql
+    DB_HOST: db
+    DB_PORT: 5432
+    DB_DATABASE: ${DB_DATABASE:-via_bills}
+    DB_USERNAME: ${DB_USERNAME:-via_bills}
+    DB_PASSWORD: ${DB_PASSWORD:?Set a dedicated database password}
+    SESSION_DRIVER: database
+    SESSION_ENCRYPT: 'true'
+    SESSION_SECURE_COOKIE: 'true'
+    SESSION_SAME_SITE: lax
+    CACHE_STORE: database
+    QUEUE_CONNECTION: database
+    FILESYSTEM_DISK: local
+    MAIL_MAILER: ${MAIL_MAILER:-log}
+    MAIL_HOST: ${MAIL_HOST:-127.0.0.1}
+    MAIL_PORT: ${MAIL_PORT:-587}
+    MAIL_SCHEME: ${MAIL_SCHEME:-smtp}
+    MAIL_USERNAME: ${MAIL_USERNAME:-}
+    MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+    MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-hello@example.com}
+    MAIL_FROM_NAME: VIA Bill Management
+  volumes:
+    - app-storage:/var/www/html/storage
+  restart: unless-stopped
+services:
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-via_bills}
+      POSTGRES_USER: ${DB_USERNAME:-via_bills}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set a dedicated database password}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  migrate:
+    <<: *app
+    command: [php, artisan, migrate, '--force']
+    restart: 'no'
+    depends_on:
+      db:
+        condition: service_healthy
+    labels:
+      - coolify.exclude_from_hc=true
+  app:
+    <<: *app
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.coolify
+      target: web
+    expose:
+      - '80'
+    depends_on:
+      - app
+    healthcheck:
+      test: [CMD-SHELL, 'wget -q -O /dev/null http://127.0.0.1/up || exit 1']
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+  worker:
+    <<: *app
+    profiles: [background]
+    command: [php, artisan, 'queue:work', '--sleep=3', '--tries=3', '--timeout=90']
+    stop_grace_period: 100s
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+  scheduler:
+    <<: *app
+    profiles: [background]
+    command: [php, artisan, 'schedule:work']
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+volumes:
+  postgres-data:
+  app-storage:

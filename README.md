@@ -54,7 +54,7 @@ Before the free-versus-paid subscription discussion, the functional core still n
 
 Planning documents are in [docs](docs/README.md).
 
-The deployment target is **Coolify**, following the other project's operational approach. Production packaging is still planned; the current Docker setup is for local development. See [deployment notes](docs/DEPLOYMENT.md).
+The deployment target is **Coolify**, following the other project's operational approach. Use `/compose.coolify.yaml` for Git-based development-server deployments with nginx/PHP-FPM, compiled assets, dedicated PostgreSQL and migration gating. Background worker/scheduler services are optional. The default `compose.yaml` remains local-only. See [deployment notes](docs/DEPLOYMENT.md).
 
 ## Platform management
 
