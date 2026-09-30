@@ -1,7 +1,8 @@
 # Project documents
 
+- [Development backlog](DEVELOPMENT-BACKLOG.md): current priorities, both-proposal comparison, feature acceptance criteria and launch gates.
 - [Rebuild plan](REBUILD-PLAN.md): legacy page inventory and phased scope.
-- [Second-account review](ACCOUNT-REVIEW-CHECKLIST.md): 24 open questions and the examples needed to resolve them.
+- [Second-account review](ACCOUNT-REVIEW-CHECKLIST.md): 24 open legacy questions plus proposal follow-ups and the examples needed to resolve them.
 - [Dashboard and Laravel](DASHBOARD-AND-LARAVEL.md): product direction and prior-project stack alignment.
 - [Persistent demo](PERSISTENT-DEMO.md): implemented data model, demo assumptions and next slice.
 - [Private test accounts](TEST-ACCOUNTS.md): controlled meter pilot provisioning, owner onboarding and private manifest handling.

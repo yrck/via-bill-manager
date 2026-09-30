@@ -43,12 +43,14 @@ The base test case forces in-memory SQLite before database refresh and removes a
 
 ## Next slices
 
-1. Review dashboard behavior and resolve the core second-account checklist.
-2. Review the manual intake → private PDF → authenticated review → dashboard workflow with the internal pilot.
-3. Extend VIA customer management beyond organization status; owner member access management is implemented.
-4. Refine persisted portfolio/account fields using sample locations and bills; add statement versioning.
-5. Extend manual intake with statement corrections, additional utility types and automated extraction/validation.
-6. Plan Smart Meter Texas, MISO and PJM connections; add interval storage using TimescaleDB once actual meter workloads are available.
+The [development backlog](docs/DEVELOPMENT-BACKLOG.md) reconciles both supplied proposals with the implemented application and defines completion criteria.
+
+1. Review the private pilot workflow and add corrected/versioned statements with detailed charges.
+2. Add explicit billing schedules, explainable findings, assigned exceptions and an actionable customer dashboard.
+3. Add reconciled reports/exports, then approval/accounting handoff and evidence-backed recovery tracking.
+4. Extend staged bulk intake, assisted extraction and authorized provider collection with visible failures and retries.
+5. Extend VIA management with onboarding progress, client-manager assignments, data health and quarterly follow-ups.
+6. Plan enterprise SSO, contracts/budgets, comparisons and optional Smart Meter Texas/MISO/PJM intelligence against customer scope; benchmark Timescale for actual interval workloads.
 
 The first manual intake-to-evidence-to-dashboard workflow is implemented and tested. Free-versus-paid subscription planning can now begin alongside pilot review. Sample bills and locations will inform intake fields and validation. Subscriptions, pricing and plan limits are not yet implemented. Coolify production readiness remains a separate launch requirement.
 

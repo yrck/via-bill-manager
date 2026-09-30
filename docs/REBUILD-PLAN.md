@@ -2,6 +2,8 @@
 
 Reviewed September 29, 2026 through the signed-in Tango E&S demo UI.
 
+September 30 update: the [development backlog](DEVELOPMENT-BACKLOG.md) compares both supplied proposals with current implementation and supplies the current delivery order. This document remains the historical UI inventory and broad replacement scope; its original phase estimates are not a new delivery commitment.
+
 Follow-up documents: [Second-account review checklist](ACCOUNT-REVIEW-CHECKLIST.md) records unverified functions and required examples. [Laravel and dashboard proposal](DASHBOARD-AND-LARAVEL.md) aligns the foundation with Via Contract Manager and defines an actionable dashboard.
 
 ## Recommendation

@@ -45,3 +45,21 @@ Start with a populated account containing recent bills, source PDFs and exceptio
 Record each result using: **ID · account/role · page · example period/record · observed behavior · confirmed rule · remaining question · evidence reference · reviewer/date**. Mark a feature unavailable, permission-restricted, unconfigured or unexplained only when the evidence supports that distinction. Keep credentials out of notes and screenshots.
 
 A second account has not been reviewed yet. The dashboard proposal must not imply verified invoice approval, payment execution, collection automation or savings claims until the corresponding items are resolved.
+
+## Proposal follow-ups — September 30, 2026
+
+Both the earlier vendor proposal and submitted VIA proposal were reviewed. They describe intended capabilities, not demonstrated workflows. R01–R24 remain open. The [development backlog](DEVELOPMENT-BACKLOG.md) retains unique information from each and records proposed implementation priorities.
+
+| ID | Open question | Evidence needed / related backlog |
+|---|---|---|
+| P01 | Which validation examples are true rejection rules versus review warnings? Equality of total/new charges can be valid; how are same-day adjustments, gaps, overlaps and rebills treated? | Original/corrected bill pair, rule inputs and reason codes; R01/R02/R06, B01/B03. |
+| P02 | Which approval steps and accounting integration actually support the AP promise? Which system is authoritative for payment? | Approved bill, permission matrix, accepted export/API payload, GL allocation and return/reconciliation sample; R03/R04, B05. |
+| P03 | How is a billing discrepancy pursued and credited, and how is recovered value separated from potential/modelled savings? | Completed dispute with partial credit/refund, correspondence and reporting treatment; B06. |
+| P04 | What is included in managed customer service, and what remains technical support? Which information can customers see? | Client-manager assignment, onboarding checklist, first-cycle acceptance, quarterly review/action list, support escalation and training/adoption definitions; B13. |
+| P05 | Does an enterprise customer require SAML federation, Microsoft sign-in, enforced SSO or automated provisioning? | Identity-provider configuration requirements, multi-account identity mapping and deprovisioning example; R08, B10. |
+| P06 | Which reports, custom outputs and distributions are essential? Can original PDFs be exported in bulk? | Five accepted outputs, typed Excel file, PDF/CSV totals, document package manifest and a scheduled-recipient example; R07/R09/R11, B08. |
+| P07 | Which provider collection and market feeds are available to the replacement, and which modules are actually included? | Supported-provider/authorization inventory; healthy/failed connection; separate interval versus market feed contract and event definitions; R01/R20/R22, B07/B14/B18. |
+| P08 | What data-lifecycle and operating commitments should this independently hosted product provide? | Approved support scope, hosting/retention inventory, restore test, customer export/offboarding example and access-window requirements; R11, B16/B17. Proposal claims alone do not resolve these. |
+| P09 | Which enterprise budget and comparison calculations must be reproduced? | Accepted manual budget/variance, supply-rate history, model inputs/fit diagnostics, reforecast and benchmark cohort/coverage; R12/R14/R17, B11/B12. |
+
+Keep customer-specific commercial terms and source proposal files outside Git. Resolve these with the workflow owner or authorized populated examples, and record evidence using the review-session format above.
