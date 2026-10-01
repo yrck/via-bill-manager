@@ -63,6 +63,13 @@ class CustomerViewController extends Controller
         ]);
     }
 
+    public function exceptions(Request $request, CustomerBillController $bills)
+    {
+        [$event, $record, $target] = $this->context($request);
+
+        return $bills->exceptionsFor($request, $target, $record, $event);
+    }
+
     public function bills(Request $request, CustomerBillController $bills)
     {
         [$event, $record, $target] = $this->context($request);

@@ -47,10 +47,12 @@ Statement corrections and optional detailed charges are now implemented: reviewe
 
 Owners can configure monthly billing expectations from Location → Billing schedule, including receipt day, grace period and a stop/resume month. The customer dashboard distinguishes missing, awaiting and unknown coverage. See [billing schedules](docs/BILLING-SCHEDULES.md).
 
+Reviewers can open investigations from received or missing bills, assign follow-ups, record notes and resolve/reopen with history. Workspace → Investigations & follow-ups lists scoped work by assignee and due date. See [investigation workflow](docs/BILL-INVESTIGATIONS.md).
+
 The [development backlog](docs/DEVELOPMENT-BACKLOG.md) reconciles both supplied proposals with the implemented application and defines completion criteria.
 
 1. Review the implemented corrections/charge-detail workflow with the private pilot; define voiding and multiple independent bills per month using representative examples.
-2. Review the implemented monthly schedules, grace periods and collection dashboard; add explainable findings and assigned exceptions next.
+2. Review monthly schedules and the new assigned investigation workflow; add explainable, versioned validation findings next.
 3. Add reconciled reports/exports, then approval/accounting handoff and evidence-backed recovery tracking.
 4. Extend staged bulk intake, assisted extraction and authorized provider collection with visible failures and retries.
 5. Extend VIA management with onboarding progress, client-manager assignments, data health and quarterly follow-ups.

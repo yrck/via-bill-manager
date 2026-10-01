@@ -1,6 +1,6 @@
 <x-customer-layout :customer-view="$customerView"><main>
 <a class="back-link" href="{{ $customerView ? route('platform.customer-view.bills') : route('customer.bills', $organization->id) }}">← Bill register</a>
-<div class="heading"><div><div class="eyebrow">{{ $bill->location }} · {{ \Carbon\CarbonImmutable::parse($bill->period)->format('M Y') }}</div><h1>{{ $bill->reference }}</h1><p>{{ $bill->supplier }} · {{ $bill->commodity }}</p></div><span class="status-badge {{ $bill->display_status }}">{{ ['review' => 'Needs review', 'verified' => 'Verified', 'missing' => 'Missing statement', 'awaiting' => 'Awaiting statement', 'superseded' => 'Superseded version'][$bill->display_status] ?? 'Unknown status' }}</span></div>
+<div class="heading"><div><div class="eyebrow">{{ $bill->location }} · {{ \Carbon\CarbonImmutable::parse($bill->period)->format('M Y') }}</div><h1>{{ $bill->reference }}</h1><p>{{ $bill->supplier }} · {{ $bill->commodity }}</p></div><span class="status-badge {{ $bill->display_status }}">{{ ['review' => 'Needs review', 'verified' => 'Verified', 'missing' => 'Missing statement', 'awaiting' => 'Awaiting statement', 'superseded' => 'Superseded version', 'excluded' => 'Not expected'][$bill->display_status] ?? 'Unknown status' }}</span></div>
 @include('partials.auth-feedback')
 @if($historical)<div class="revision-note"><strong>Historical version {{ $selectedRevision }}</strong><p>This version has been replaced and is excluded from current totals. Review history below identifies the version each decision applied to.</p><a class="inspect" href="{{ $customerView ? route('platform.customer-view.bill', $bill->id) : route('customer.bills.show', [$organization->id, $bill->id]) }}">View current version</a></div>@endif
 <div class="bill-detail-grid"><div>
@@ -18,6 +18,7 @@
 <section class="panel"><div class="panel-heading"><h2>Review history</h2></div>
 @forelse($history as $event)<article class="review-event"><div><strong>{{ $event->to_status === 'verified' ? 'Verified' : 'Reopened' }} · {{ $event->actor_name }} · Version {{ $event->revision_number }}</strong><time>{{ \Carbon\CarbonImmutable::parse($event->created_at)->utc()->format('M j, Y H:i') }} UTC</time></div><p>{{ $event->note }}</p></article>@empty<div class="empty">No review decisions recorded.</div>@endforelse
 <div class="pagination">{{ $history->links() }}</div></section>
+@include('customer.bill-exception')
 </div><aside class="panel review-form">
 @if($canReview && in_array($bill->status, ['review', 'verified']))
 <a class="inspect" href="{{ route('customer.bills.correct', [$organization->id, $bill->id]) }}">Correct statement</a>

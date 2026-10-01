@@ -6,6 +6,7 @@ use App\Access\BillingAccess;
 use App\Access\CustomerAccounts;
 use App\Billing\CustomerBills;
 use App\Models\User;
+use App\Services\BillExceptions;
 use App\Services\CustomerBillReview;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -68,7 +69,7 @@ class CustomerBillController extends Controller
 
     public function showFor(User $user, object $organization, int $bill, ?object $customerView = null, ?Request $request = null)
     {
-        $record = app(CustomerBills::class)->query($user, $organization->id)->where('e.id', $bill)->first();
+        $record = app(CustomerBills::class)->query($user, $organization->id, true)->where('e.id', $bill)->first();
         abort_unless($record, 404);
         $selection = $request?->validate(['revision' => ['nullable', 'integer', 'min:1']]) ?? [];
         $currentNumber = $record->revision_number;
@@ -84,7 +85,13 @@ class CustomerBillController extends Controller
             $record->display_status = 'superseded';
         }
 
+        $exception = DB::table('bill_exceptions')->where('expected_bill_id', $bill)->first();
+
         return view('customer.bill', [
+            'exception' => $exception,
+            'canManageException' => ! $customerView && ! $historical && app(BillingAccess::class)->expectedBills($user, $organization->id, true)->where('id', $bill)->exists(),
+            'assignees' => app(BillExceptions::class)->assignees($organization->id, $bill),
+            'exceptionEvents' => DB::table('bill_exception_events')->where('bill_exception_id', $exception?->id)->orderByDesc('version')->paginate(10, ['*'], 'events')->withQueryString(),
             'organization' => $organization, 'customerView' => $customerView, 'bill' => $record,
             'canReview' => ! $customerView && ! $historical && app(BillingAccess::class)->canReviewBill($user, $organization->id, $bill),
             'document' => $revision ? DB::table('bill_documents')->where('organization_id', $organization->id)->where('statement_id', $record->statement_id)->where('id', $revision->document_id)->first() : null,
@@ -93,6 +100,40 @@ class CustomerBillController extends Controller
             'selectedRevision' => $number, 'historical' => $historical,
             'history' => DB::table('customer_review_decisions')->where('statement_id', $record->statement_id)->orderByDesc('version')->paginate(10)->withQueryString(),
         ]);
+    }
+
+    public function exception(Request $request, int $organization, int $bill, BillExceptions $exceptions)
+    {
+        $this->account($request, $organization);
+        abort_if($request->session()->has('customer_view_id'), 403);
+        $exceptions->record($request->user(), $organization, $bill, $request->all());
+
+        return redirect()->route('customer.bills.show', [$organization, $bill])->with('status', 'Investigation saved. Bill verification is unchanged.');
+    }
+
+    public function exceptions(Request $request, int $organization)
+    {
+        return $this->exceptionsFor($request, $request->user(), $this->account($request, $organization));
+    }
+
+    public function exceptionsFor(Request $request, User $user, object $organization, ?object $customerView = null)
+    {
+        $filters = $request->validate(['state' => ['nullable', 'in:open,resolved'], 'assignment' => ['nullable', 'in:mine,unassigned'], 'overdue' => ['nullable', 'in:1']]);
+        $query = app(CustomerBills::class)->query($user, $organization->id, true)
+            ->join('bill_exceptions as x', 'x.expected_bill_id', '=', 'e.id')
+            ->where('x.status', $filters['state'] ?? 'open')
+            ->addSelect('x.status as exception_status', 'x.assignee_name', 'x.next_action', 'x.due_on as action_due', 'x.source_revision');
+        if (($filters['assignment'] ?? null) === 'mine') {
+            $query->where('x.assignee_id', $user->id);
+        } elseif (($filters['assignment'] ?? null) === 'unassigned') {
+            $query->whereNull('x.assignee_id');
+        }
+        if ($filters['overdue'] ?? false) {
+            $query->where('x.status', 'open')->where('x.due_on', '<', today()->toDateString());
+        }
+
+        return view('customer.exceptions', ['organization' => $organization, 'customerView' => $customerView, 'filters' => $filters,
+            'exceptions' => $query->orderBy('x.due_on')->orderBy('x.id')->paginate(25)->withQueryString()]);
     }
 
     public function review(Request $request, int $organization, int $bill, CustomerBillReview $review)

@@ -1,4 +1,5 @@
 <x-customer-layout :customer-view="$customerView ?? null"><main><a class="back-link" href="{{ isset($customerView) ? route('platform.customers.show', $organization->id) : route('customer.home') }}">← {{ isset($customerView) ? 'Customer details' : 'My accounts' }}</a><div class="heading"><div><div class="eyebrow">CUSTOMER WORKSPACE</div><h1>{{ $organization->name }}</h1><p>Your account's utility-bill workspace.</p></div></div>
+<p><a class="inspect" href="{{ isset($customerView) ? route('platform.customer-view.exceptions') : route('customer.exceptions', $organization->id) }}">Investigations &amp; follow-ups →</a></p>
 @include('partials.auth-feedback')
 @if($organization->is_test_account)<div class="review-notice">Test account · Private development data
 @if($organization->legal_name)<br>{{ $organization->legal_name }}@endif</div>@endif

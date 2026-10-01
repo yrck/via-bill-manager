@@ -56,6 +56,8 @@ Route::post('/invitations/{token}/register', [InvitationController::class, 'regi
 Route::middleware(['auth', RequireActiveCustomer::class, 'auth.session', 'verified'])->group(function () {
     Route::get('/workspace/{organization}/accounts/{account}/schedule', [BillingScheduleController::class, 'show'])->whereNumber(['organization', 'account'])->name('customer.accounts.schedule');
     Route::post('/workspace/{organization}/accounts/{account}/schedule', [BillingScheduleController::class, 'store'])->whereNumber(['organization', 'account'])->middleware('throttle:10,1')->name('customer.accounts.schedule.store');
+    Route::get('/workspace/{organization}/exceptions', [CustomerBillController::class, 'exceptions'])->whereNumber('organization')->name('customer.exceptions');
+    Route::post('/workspace/{organization}/bills/{bill}/exception', [CustomerBillController::class, 'exception'])->whereNumber(['organization', 'bill'])->middleware('throttle:20,1')->name('customer.bills.exception');
     Route::get('/workspace/{organization}/bills/upload', [BillIntakeController::class, 'create'])->whereNumber('organization')->name('customer.bills.upload');
     Route::post('/workspace/{organization}/bills', [BillIntakeController::class, 'store'])->whereNumber('organization')->middleware('throttle:10,1')->name('customer.bills.store');
     Route::get('/workspace/{organization}/bills/{bill}/document', [BillIntakeController::class, 'download'])->whereNumber(['organization', 'bill'])->name('customer.bills.document');
@@ -82,6 +84,7 @@ Route::prefix('management')->middleware(['auth', RequireActiveCustomer::class, '
     Route::post('/users/{user}/manager', [ManagerController::class, 'update'])->whereNumber('user')->middleware('throttle:20,1')->name('platform.managers.update');
     Route::post('/customers/{organization}/view', [CustomerViewController::class, 'start'])->whereNumber('organization')->name('platform.customer-view.start');
     Route::get('/customer-view', [CustomerViewController::class, 'show'])->name('platform.customer-view');
+    Route::get('/customer-view/exceptions', [CustomerViewController::class, 'exceptions'])->name('platform.customer-view.exceptions');
     Route::get('/customer-view/bills', [CustomerViewController::class, 'bills'])->name('platform.customer-view.bills');
     Route::get('/customer-view/bills/{bill}/document', [CustomerViewController::class, 'document'])->whereNumber('bill')->name('platform.customer-view.document');
     Route::get('/customer-view/bills/{bill}', [CustomerViewController::class, 'bill'])->whereNumber('bill')->name('platform.customer-view.bill');

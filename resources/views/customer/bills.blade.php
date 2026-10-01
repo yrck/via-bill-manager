@@ -1,6 +1,7 @@
 <x-customer-layout :customer-view="$customerView"><main>
 <a class="back-link" href="{{ $customerView ? route('platform.customer-view') : route('customer.workspace', $organization->id) }}">← {{ $organization->name }}</a>
 <div class="heading"><div><div class="eyebrow">BILL REGISTER</div><h1>Your bills, in view.</h1><p>Received statements and expected bills for the properties you can access.</p></div></div>
+<p><a class="inspect" href="{{ $customerView ? route('platform.customer-view.exceptions') : route('customer.exceptions', $organization->id) }}">Investigations &amp; follow-ups →</a></p>
 @include('partials.auth-feedback')
 @if(!$customerView && $organization->role === 'reviewer')<p class="team-entry"><a class="inspect" href="{{ route('customer.bills.upload', $organization->id) }}">+ Upload statement</a></p>@endif
 <form method="GET" class="toolbar bill-filters">
