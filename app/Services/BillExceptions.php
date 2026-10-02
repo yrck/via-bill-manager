@@ -33,6 +33,7 @@ class BillExceptions
             abort_unless(app(BillingAccess::class)->expectedBills($actor, $organization, true)->where('id', $bill)->exists(), 404);
             $data = Validator::make($input, [
                 'version' => ['required', 'integer', 'min:0'],
+                'validation_run_id' => ['nullable', 'integer', 'min:0'],
                 'source_revision' => ['required', 'integer', 'min:0'],
                 'action' => ['required', 'in:open,update,resolve,reopen'],
                 'note' => ['required', 'string', 'min:10', 'max:2000'],
@@ -41,9 +42,11 @@ class BillExceptions
                 'due_on' => ['required_unless:action,resolve', 'nullable', 'date_format:Y-m-d'],
             ])->validate();
             $existing = DB::table('bill_exceptions')->where('expected_bill_id', $bill)->first();
-            $revision = (int) DB::table('statements')->where('expected_bill_id', $bill)->value('revision_number');
-            if ((int) $data['version'] !== (int) ($existing->version ?? 0) || (int) $data['source_revision'] !== $revision) {
-                throw ValidationException::withMessages(['exception' => 'The investigation or statement changed. Reload before saving.']);
+            $statement = DB::table('statements')->where('expected_bill_id', $bill)->first();
+            $revision = (int) ($statement?->revision_number ?? 0);
+            $validation = (int) ($statement?->validation_run_id ?? 0);
+            if ((int) ($data['validation_run_id'] ?? 0) !== $validation || (int) $data['version'] !== (int) ($existing->version ?? 0) || (int) $data['source_revision'] !== $revision) {
+                throw ValidationException::withMessages(['exception' => 'The investigation, statement or validation evidence changed. Reload before saving.']);
             }
             $allowed = ! $existing ? ['open'] : ($existing->status === 'open' ? ['update', 'resolve'] : ['reopen']);
             if (! in_array($data['action'], $allowed)) {
@@ -60,7 +63,7 @@ class BillExceptions
                     'next_action' => $data['next_action'], 'due_on' => $data['due_on'],
                 ]);
             }
-            $state = array_merge($state, ['status' => $data['action'] === 'resolve' ? 'resolved' : 'open', 'source_revision' => $revision, 'version' => ($existing->version ?? 0) + 1]);
+            $state = array_merge($state, ['status' => $data['action'] === 'resolve' ? 'resolved' : 'open', 'source_revision' => $revision, 'source_validation_run_id' => $validation ?: null, 'version' => ($existing->version ?? 0) + 1]);
             $id = $existing?->id;
             if ($id) {
                 DB::table('bill_exceptions')->where('id', $id)->update($state + ['updated_at' => now()]);
@@ -78,6 +81,6 @@ class BillExceptions
 
     private function snapshot(object $record): array
     {
-        return array_intersect_key((array) $record, array_flip(['status', 'assignee_id', 'assignee_name', 'next_action', 'due_on', 'source_revision', 'version']));
+        return array_intersect_key((array) $record, array_flip(['status', 'assignee_id', 'assignee_name', 'next_action', 'due_on', 'source_revision', 'source_validation_run_id', 'version']));
     }
 }

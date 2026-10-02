@@ -145,6 +145,10 @@ class BillIntakeTest extends TestCase
         $this->assertDatabaseCount('statement_revisions', 2);
         $this->assertDatabaseCount('bill_documents', 1);
         $this->assertDatabaseHas('statements', ['charges_cents' => 8500, 'status' => 'review', 'review_version' => 2, 'revision_number' => 2]);
+        $this->assertDatabaseCount('bill_validation_runs', 2);
+        $this->assertDatabaseHas('bill_validation_runs', ['source_revision' => 1]);
+        $this->assertDatabaseHas('bill_validation_runs', ['source_revision' => 2]);
+        $this->get($this->base().'/'.$bill.'?revision=1')->assertOk()->assertSee('Retained history')->assertDontSee('Refresh validation');
         $this->assertDatabaseHas('customer_review_decisions', ['revision_number' => 1, 'to_status' => 'verified']);
         $this->assertDatabaseHas('statement_revisions', ['number' => 2, 'actor_id' => $this->user->id]);
         $original = json_decode(DB::table('statement_revisions')->where('number', 1)->value('snapshot'), true);

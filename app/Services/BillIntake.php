@@ -118,6 +118,8 @@ class BillIntake
                     DB::table('statement_line_items')->insert($item + ['statement_revision_id' => $revision]);
                 }
 
+                app(BillValidation::class)->evaluateAccount($organization, $account->id);
+
                 return $expectedId;
             });
         } catch (\Throwable $exception) {

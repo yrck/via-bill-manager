@@ -7,6 +7,7 @@ use App\Access\CustomerAccounts;
 use App\Billing\CustomerBills;
 use App\Models\User;
 use App\Services\BillExceptions;
+use App\Services\BillValidation;
 use App\Services\CustomerBillReview;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -88,6 +89,7 @@ class CustomerBillController extends Controller
         $exception = DB::table('bill_exceptions')->where('expected_bill_id', $bill)->first();
 
         return view('customer.bill', [
+            'validationRuns' => DB::table('bill_validation_runs')->where('statement_id', $record->statement_id)->where('source_revision', $number)->orderByDesc('id')->paginate(5, ['*'], 'checks')->withQueryString(),
             'exception' => $exception,
             'canManageException' => ! $customerView && ! $historical && app(BillingAccess::class)->expectedBills($user, $organization->id, true)->where('id', $bill)->exists(),
             'assignees' => app(BillExceptions::class)->assignees($organization->id, $bill),
@@ -100,6 +102,15 @@ class CustomerBillController extends Controller
             'selectedRevision' => $number, 'historical' => $historical,
             'history' => DB::table('customer_review_decisions')->where('statement_id', $record->statement_id)->orderByDesc('version')->paginate(10)->withQueryString(),
         ]);
+    }
+
+    public function validateBill(Request $request, int $organization, int $bill, BillValidation $validation)
+    {
+        $this->account($request, $organization);
+        abort_if($request->session()->has('customer_view_id'), 403);
+        $validation->refresh($request->user(), $organization, $bill);
+
+        return redirect()->route('customer.bills.show', [$organization, $bill])->with('status', 'Validation refreshed for this utility account. Review and investigation decisions are unchanged.');
     }
 
     public function exception(Request $request, int $organization, int $bill, BillExceptions $exceptions)
@@ -122,7 +133,7 @@ class CustomerBillController extends Controller
         $query = app(CustomerBills::class)->query($user, $organization->id, true)
             ->join('bill_exceptions as x', 'x.expected_bill_id', '=', 'e.id')
             ->where('x.status', $filters['state'] ?? 'open')
-            ->addSelect('x.status as exception_status', 'x.assignee_name', 'x.next_action', 'x.due_on as action_due', 'x.source_revision');
+            ->addSelect('x.status as exception_status', 'x.assignee_name', 'x.next_action', 'x.due_on as action_due', 'x.source_revision', 'x.source_validation_run_id');
         if (($filters['assignment'] ?? null) === 'mine') {
             $query->where('x.assignee_id', $user->id);
         } elseif (($filters['assignment'] ?? null) === 'unassigned') {

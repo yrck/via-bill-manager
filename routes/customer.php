@@ -57,6 +57,7 @@ Route::middleware(['auth', RequireActiveCustomer::class, 'auth.session', 'verifi
     Route::get('/workspace/{organization}/accounts/{account}/schedule', [BillingScheduleController::class, 'show'])->whereNumber(['organization', 'account'])->name('customer.accounts.schedule');
     Route::post('/workspace/{organization}/accounts/{account}/schedule', [BillingScheduleController::class, 'store'])->whereNumber(['organization', 'account'])->middleware('throttle:10,1')->name('customer.accounts.schedule.store');
     Route::get('/workspace/{organization}/exceptions', [CustomerBillController::class, 'exceptions'])->whereNumber('organization')->name('customer.exceptions');
+    Route::post('/workspace/{organization}/bills/{bill}/validate', [CustomerBillController::class, 'validateBill'])->whereNumber(['organization', 'bill'])->middleware('throttle:10,1')->name('customer.bills.validate');
     Route::post('/workspace/{organization}/bills/{bill}/exception', [CustomerBillController::class, 'exception'])->whereNumber(['organization', 'bill'])->middleware('throttle:20,1')->name('customer.bills.exception');
     Route::get('/workspace/{organization}/bills/upload', [BillIntakeController::class, 'create'])->whereNumber('organization')->name('customer.bills.upload');
     Route::post('/workspace/{organization}/bills', [BillIntakeController::class, 'store'])->whereNumber('organization')->middleware('throttle:10,1')->name('customer.bills.store');

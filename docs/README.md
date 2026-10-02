@@ -2,6 +2,7 @@
 
 - [Development backlog](DEVELOPMENT-BACKLOG.md): current priorities, both-proposal comparison, feature acceptance criteria and launch gates.
 - [Statement history](STATEMENT-HISTORY.md): implemented corrections, detailed charges, original evidence and migration behavior.
+- [Bill validation](BILL-VALIDATION.md): versioned screening rules, source/comparison evidence, insufficient history and correction reevaluation.
 - [Bill investigations](BILL-INVESTIGATIONS.md): reviewer assignments, follow-up queue, notes, resolution/reopening and source changes.
 - [Billing schedules](BILLING-SCHEDULES.md): monthly receipt rules, grace periods, collection coverage and scheduler operation.
 - [Rebuild plan](REBUILD-PLAN.md): legacy page inventory and phased scope.

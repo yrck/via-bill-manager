@@ -18,6 +18,7 @@
 <section class="panel"><div class="panel-heading"><h2>Review history</h2></div>
 @forelse($history as $event)<article class="review-event"><div><strong>{{ $event->to_status === 'verified' ? 'Verified' : 'Reopened' }} · {{ $event->actor_name }} · Version {{ $event->revision_number }}</strong><time>{{ \Carbon\CarbonImmutable::parse($event->created_at)->utc()->format('M j, Y H:i') }} UTC</time></div><p>{{ $event->note }}</p></article>@empty<div class="empty">No review decisions recorded.</div>@endforelse
 <div class="pagination">{{ $history->links() }}</div></section>
+@include('customer.bill-validation')
 @include('customer.bill-exception')
 </div><aside class="panel review-form">
 @if($canReview && in_array($bill->status, ['review', 'verified']))

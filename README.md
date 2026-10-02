@@ -49,10 +49,12 @@ Owners can configure monthly billing expectations from Location → Billing sche
 
 Reviewers can open investigations from received or missing bills, assign follow-ups, record notes and resolve/reopen with history. Workspace → Investigations & follow-ups lists scoped work by assignee and due date. See [investigation workflow](docs/BILL-INVESTIGATIONS.md).
 
+Bill details now show versioned service-duration/continuity and daily usage/current-charge checks, with explicit insufficient-history outcomes. Intake and corrections reevaluate the account while retaining earlier evidence; existing bills have a reviewer refresh action. See [bill validation](docs/BILL-VALIDATION.md).
+
 The [development backlog](docs/DEVELOPMENT-BACKLOG.md) reconciles both supplied proposals with the implemented application and defines completion criteria.
 
 1. Review the implemented corrections/charge-detail workflow with the private pilot; define voiding and multiple independent bills per month using representative examples.
-2. Review monthly schedules and the new assigned investigation workflow; add explainable, versioned validation findings next.
+2. Review monthly schedules and the new assigned investigation workflow; review the initial explainable validation rules and thresholds with representative pilot bills.
 3. Add reconciled reports/exports, then approval/accounting handoff and evidence-backed recovery tracking.
 4. Extend staged bulk intake, assisted extraction and authorized provider collection with visible failures and retries.
 5. Extend VIA management with onboarding progress, client-manager assignments, data health and quarterly follow-ups.
