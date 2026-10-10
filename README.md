@@ -51,11 +51,13 @@ Reviewers can open investigations from received or missing bills, assign follow-
 
 Bill details now show versioned service-duration/continuity and daily usage/current-charge checks, with explicit insufficient-history outcomes. Intake and corrections reevaluate the account while retaining earlier evidence; existing bills have a reviewer refresh action. See [bill validation](docs/BILL-VALIDATION.md).
 
+The workspace and bill register now include a filtered bill report and CSV export. Current-charge totals reconcile to displayed rows, currencies stay separate, and missing amounts stay unknown. See [bill reports](docs/BILL-REPORTS.md).
+
 The [development backlog](docs/DEVELOPMENT-BACKLOG.md) reconciles both supplied proposals with the implemented application and defines completion criteria.
 
 1. Review the implemented corrections/charge-detail workflow with the private pilot; define voiding and multiple independent bills per month using representative examples.
 2. Review monthly schedules and the new assigned investigation workflow; review the initial explainable validation rules and thresholds with representative pilot bills.
-3. Add reconciled reports/exports, then approval/accounting handoff and evidence-backed recovery tracking.
+3. Review the initial bill report/CSV export; extend charge-level reports, then approval/accounting handoff and evidence-backed recovery tracking.
 4. Extend staged bulk intake, assisted extraction and authorized provider collection with visible failures and retries.
 5. Extend VIA management with onboarding progress, client-manager assignments, data health and quarterly follow-ups.
 6. Plan enterprise SSO, contracts/budgets, comparisons and optional Smart Meter Texas/MISO/PJM intelligence against customer scope; benchmark Timescale for actual interval workloads.

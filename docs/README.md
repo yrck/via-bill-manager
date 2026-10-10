@@ -1,6 +1,7 @@
 # Project documents
 
 - [Development backlog](DEVELOPMENT-BACKLOG.md): current priorities, both-proposal comparison, feature acceptance criteria and launch gates.
+- [Bill reports](BILL-REPORTS.md): scoped current-version totals, filters, CSV exports and reporting limitations.
 - [Statement history](STATEMENT-HISTORY.md): implemented corrections, detailed charges, original evidence and migration behavior.
 - [Bill validation](BILL-VALIDATION.md): versioned screening rules, source/comparison evidence, insufficient history and correction reevaluation.
 - [Bill investigations](BILL-INVESTIGATIONS.md): reviewer assignments, follow-up queue, notes, resolution/reopening and source changes.

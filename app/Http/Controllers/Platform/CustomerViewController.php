@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Platform;
 use App\Access\BillingAccess;
 use App\Billing\CustomerOverview;
 use App\Http\Controllers\BillIntakeController;
+use App\Http\Controllers\BillReportController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\CustomerBillController;
 use App\Models\User;
@@ -61,6 +62,20 @@ class CustomerViewController extends Controller
             'invitations' => DB::table('organization_invitations')->where('organization_id', $record->id)->whereNull('accepted_at')->whereNull('revoked_at')->where('expires_at', '>', now())->orderByDesc('id')->get(),
             'locations' => $access->locations($target, $record->id)->orderBy('locations.name')->get(),
         ]);
+    }
+
+    public function report(Request $request, BillReportController $reports)
+    {
+        [$event, $record, $target] = $this->context($request);
+
+        return $reports->showFor($request, $target, $record->id, $event);
+    }
+
+    public function reportExport(Request $request, BillReportController $reports)
+    {
+        [$event, $record, $target] = $this->context($request);
+
+        return $reports->showFor($request, $target, $record->id, $event, true);
     }
 
     public function exceptions(Request $request, CustomerBillController $bills)
